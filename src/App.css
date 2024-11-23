@@ -8,8 +8,3 @@
   border: 10px black;
   border-radius: 10px;
 }
-
-.container img:hover {
-  /*add a dark overlay on hover*/
-  filter: brightness(50%);
-}
