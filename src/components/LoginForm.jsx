@@ -1,4 +1,5 @@
 import { useState } from "react";
+import axios from "axios";
 
 function LoginForm() {
   const [formData, setFormData] = useState({
@@ -18,25 +19,40 @@ function LoginForm() {
     e.preventDefault();
 
     try {
-      const response = await fetch("http://127.0.0.1:8000/api/login/", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(formData),
-      });
+      const response = await axios.post(
+        "http://127.0.0.1:8000/api/login/",
+        formData,
+        {
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
 
-      const data = await response.json();
+      console.log("Login Successful:", response.data);
 
-      if (response.ok) {
-        setResponseMessage(data.message);
-        // TO DO:
-        // redirect to another page or store authentication token
-      } else {
-        setResponseMessage(data.error);
-      }
+      localStorage.setItem("authToken", JSON.stringify(response.data));
+
+      const profileResponse = await axios.get(
+        "http://localhost:8000/api/profile/",
+        {
+          headers: {
+            Authorization: `Bearer ${response.data.access}`,
+          },
+        }
+      );
+
+      console.log("User Profile:", profileResponse.data);
+      setResponseMessage(`${profileResponse.data.username}`);
     } catch (error) {
-      setResponseMessage("An error occurred. Please try again.");
+      if (error.response) {
+        setResponseMessage(
+          error.response.data.error || "An error occurred. Please try again."
+        );
+      } else {
+        setResponseMessage("An error occurred. Please try again.");
+      }
+      console.error("Login Error:", error);
     }
   };
 
@@ -62,7 +78,7 @@ function LoginForm() {
         />
       </div>
       <button type="submit">Login</button>
-      <p>{responseMessage}</p>
+      {responseMessage && <p>Welcome! {responseMessage}</p>}
     </form>
   );
 }
