@@ -1,5 +1,7 @@
 import { useState } from "react";
 import axios from "axios";
+import { useNavigate } from "react-router-dom";
+
 
 function LoginForm() {
   const [formData, setFormData] = useState({
@@ -7,6 +9,7 @@ function LoginForm() {
     password: "",
   });
   const [responseMessage, setResponseMessage] = useState("");
+  const navigate = useNavigate();
 
   const handleChange = (e) => {
     setFormData({
@@ -44,6 +47,7 @@ function LoginForm() {
 
       console.log("User Profile:", profileResponse.data);
       setResponseMessage(`${profileResponse.data.username}`);
+      navigate("/HomePosts");
     } catch (error) {
       if (error.response) {
         setResponseMessage(
@@ -57,6 +61,7 @@ function LoginForm() {
   };
 
   return (
+    <>
     <form onSubmit={handleSubmit}>
       <h2>Login</h2>
       <div>
@@ -80,6 +85,12 @@ function LoginForm() {
       <button type="submit">Login</button>
       {responseMessage && <p>Welcome! {responseMessage}</p>}
     </form>
+
+    <p>
+        If you do not have an account, click here to{" "}
+        <button onClick={() => navigate("/SignUpForm")}>Sign Up</button>
+    </p>
+    </>
   );
 }
 

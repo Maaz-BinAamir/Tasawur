@@ -1,8 +1,10 @@
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-import "./app.css";
 import SignUpForm from "./components/SignUpForm";
 import LoginForm from "./components/LoginForm";
-import GoogleLoginButton from "./components/GoogleLogin";
+import {HomePosts, links} from "./components/HomePosts";
+import Post from "./components/Post";
+import Profile from "./components/Profile";
+import EditProfile from "./components/EditProfile";
 
 function App() {
   return (

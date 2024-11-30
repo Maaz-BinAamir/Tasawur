@@ -1,4 +1,6 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import GoogleLoginButton from "./GoogleLogin"
 
 function SignUpForm() {
   const [formData, setFormData] = useState({
@@ -6,6 +8,8 @@ function SignUpForm() {
     email: "",
     password: "",
   });
+
+  const navigate = useNavigate();
 
   function handleChange (e) {
     setFormData({
@@ -30,12 +34,14 @@ function SignUpForm() {
       );
       const data = await response.json();
       console.log(data);
+      navigate("/HomePosts");
     } catch (error) {
       console.error("Error:", error);
     }
   };
 
   return (
+    <>
     <form onSubmit={handleSubmit}>
       <h2>Sign Up</h2>
       <div>
@@ -67,6 +73,13 @@ function SignUpForm() {
       </div>
       <button type="submit">Sign Up</button>
     </form>
+    <GoogleLoginButton />
+
+    <p>
+        Already Have an account? Click here to{" "}
+        <button onClick={() => navigate("/")}>Login</button>
+    </p>
+    </>
   );
 }
 

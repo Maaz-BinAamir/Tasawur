@@ -11,7 +11,7 @@ function NavBar(){
   };
 
   const openHome = () => {
-    navigate(`/`);
+    navigate(`/HomePosts`);
   };
 
     return(
