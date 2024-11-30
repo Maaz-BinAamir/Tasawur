@@ -1,7 +1,7 @@
-import "./App.css";
+import "../App.css";
 import { useState, useEffect } from "react";
 
-function OneComment({ id, username, content, likes, createdAt, onLike, hasLiked }) {
+function OneComment({ id, username, content, likes, createdAt, onLike, hasLiked, profilePic }) {
   const [currentLikes, setCurrentLikes] = useState(likes);
 
   const handleLike = () => {
@@ -14,6 +14,9 @@ function OneComment({ id, username, content, likes, createdAt, onLike, hasLiked 
   return (
     <div className="comment">
       <div>
+      <img
+        src={profilePic} className="pfp"
+      />
         <strong>{username}</strong>
       </div>
       <div>{content}</div>
@@ -53,7 +56,7 @@ function MakeComment({ onAddComment }) {
   );
 }
 
-function Comments() {
+function Comments({postID}) {
   const getComments = async () => {
     return [
       {
@@ -62,7 +65,8 @@ function Comments() {
         username: "Ayesha",
         userId: "1",
         likes: 4,
-        createdAt: "2021-08-16T23:00:33.010+02:00",
+        createdAt: "2023-08-16T23:00:33.010+02:00",
+        profilePic: "https://i.pinimg.com/enabled/236x/49/34/44/493444050c86439c4cd995e5c079bb72.jpg",
       },
       {
         id: "2",
@@ -70,7 +74,8 @@ function Comments() {
         username: "Imran",
         userId: "2",
         likes: 5,
-        createdAt: "2021-08-16T23:00:33.010+02:00",
+        createdAt: "2023-08-16T23:00:33.010+02:00",
+        profilePic: "https://i.pinimg.com/enabled/236x/49/34/44/493444050c86439c4cd995e5c079bb72.jpg",
       },
     ];
   };
@@ -125,6 +130,7 @@ function Comments() {
             createdAt={comment.createdAt}
             onLike={handleLike}
             hasLiked={likedComments.includes(comment.id)}
+            profilePic={comment.profilePic}
           />
         ))
       )}
