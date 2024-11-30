@@ -97,7 +97,7 @@ DATABASES = {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
         'NAME': 'postgres',
         'USER': 'postgres.kwebqbdcvbwonprlzwuy',
-        'PASSWORD': 'NnX-utKW83k-i4k',
+        'PASSWORD': '8BQU5u5Z.@p5HtY',
         'HOST': 'aws-0-ap-southeast-1.pooler.supabase.com',
         'PORT': '6543',
     }

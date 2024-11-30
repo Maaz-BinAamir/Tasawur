@@ -1,12 +1,10 @@
-import getUser from "./DummyUsers";
+import getUser from "./dummy_items/dummy_users";
 import { useState } from "react";
-import '../App.css';
+import "../App.css";
 import NavBar from "./NavBar.jsx";
-import {
-  useNavigate
-} from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
-function Profile(){
+function Profile() {
   const [user] = getUser();
   const [showPopup, setShowPopup] = useState(false);
   const [copied, setCopied] = useState(false);
@@ -19,22 +17,20 @@ function Profile(){
 
   const openSharePopup = () => {
     setShowPopup(true);
-    setCopied(false); 
+    setCopied(false);
   };
 
   const handleCopy = () => {
     navigator.clipboard.writeText(window.location.href).then(() => {
-      setCopied(true); 
+      setCopied(true);
     });
   };
-  return(
+  return (
     <>
       <NavBar />
       <div>
-      <img
-          src={user.profilePic} className="profilepfp"
-          />
-      <div>{user.username}</div>
+        <img src={user.profilePic} className="profilepfp" />
+        <div>{user.username}</div>
       </div>
       <div>
         Followers{user.followers} Following {user.following}
@@ -44,21 +40,20 @@ function Profile(){
         <button onClick={openSharePopup}>Share Profile</button>
 
         {showPopup && (
-        <div className="popup">
-          <p>Share this link:</p>
-          <input
-            type="text"
-            value={window.location.href}
-            readOnly
-            className="popup-input"
-          />
-          <button onClick={handleCopy}>Copy Link</button>
-          {copied && <span className="copied-message">Link copied!</span>}
-          <button onClick={() => setShowPopup(false)}>Close</button>
-        </div>
-      )}
+          <div className="popup">
+            <p>Share this link:</p>
+            <input
+              type="text"
+              value={window.location.href}
+              readOnly
+              className="popup-input"
+            />
+            <button onClick={handleCopy}>Copy Link</button>
+            {copied && <span className="copied-message">Link copied!</span>}
+            <button onClick={() => setShowPopup(false)}>Close</button>
+          </div>
+        )}
       </div>
-
     </>
   );
 }
