@@ -1,35 +1,41 @@
-import "../App.css";
-import {
-  useNavigate
-} from "react-router-dom";
+import "../style/NavBar.css";
+import { useNavigate } from "react-router-dom";
 
-function NavBar(){
+function NavBar() {
   const navigate = useNavigate();
 
   const openProfile = () => {
-    navigate(`/Profile`);
+    navigate(`/profile`);
   };
 
   const openHome = () => {
-    navigate(`/HomePosts`);
+    navigate(`/homeposts`);
   };
 
-    return(
-      <>
-        <nav className="NavBar">
-        <div className="logo">MyLogo</div>
+  return (
+    <>
+      <nav className="NavBar">
+        <div className="logo" onClick={openHome}>
+          MyLogo
+        </div>
         <div className="searchBar">
           <input type="text" placeholder="Search..." />
           <button>Search</button>
         </div>
-        <div >
-          <button onClick={openProfile}><img src="" alt="Profile" /></button>
-          <button onClick={openHome}><img src="" alt="Home" /></button>
-          <button><img src="" alt="Chats" /></button>
+        <div>
+          <button onClick={openProfile}>
+            <img src="" alt="Profile" />
+          </button>
+          <button onClick={openHome}>
+            <img src="" alt="Home" />
+          </button>
+          <button>
+            <img src="" alt="Chats" />
+          </button>
         </div>
-        </nav>
-      </>
-    );
-  }
-  
-  export default NavBar;
+      </nav>
+    </>
+  );
+}
+
+export default NavBar;

@@ -1,5 +1,7 @@
-from django.contrib.auth.models import User
-from .serializers import UserSerializer
+from supabase import create_client, Client
+from api.models import CustomUser, Posts
+from django.db import models
+from .serializers import PostsSerializer, UserSerializer
 from django.contrib.auth import authenticate
 from google.oauth2 import id_token
 from google.auth.transport import requests
@@ -8,6 +10,10 @@ from rest_framework import status
 from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework_simplejwt.tokens import RefreshToken
+
+url = "https://kwebqbdcvbwonprlzwuy.supabase.co"  # Replace with your Supabase URL
+key = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imt3ZWJxYmRjdmJ3b25wcmx6d3V5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3MzI0NDUxNDIsImV4cCI6MjA0ODAyMTE0Mn0.urhzDnWoKR14FmLG58bNCZ5-l-SEOhpG0Lk1-DI2vG8"  # Replace with your Supabase API Key
+supabase: Client = create_client(url, key)
 
 @api_view(['POST'])
 @permission_classes([AllowAny])
@@ -60,7 +66,7 @@ def google_login(request):
         first_name = idinfo.get('given_name', '')
         last_name = idinfo.get('family_name', '')
 
-        user, created = User.objects.get_or_create(
+        user, created = CustomUser.objects.get_or_create(
             email=email,
             defaults={
                 'username': email.split("@")[0],
@@ -87,6 +93,126 @@ def user_profile(request):
         'id': user.id,
         'email': user.email,
         'username': user.username,
+        'profile_pic': user.profile_picture,
         'first_name': user.first_name,
         'last_name': user.last_name,
     }, status=status.HTTP_200_OK)
+        
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def other_user_profile(request, user_id):
+    user = CustomUser.objects.all().get(id=user_id)
+    return Response({
+        'id': user.id,
+        'email': user.email,
+        'username': user.username,
+        'profile_pic': user.profile_picture,
+        'first_name': user.first_name,
+        'last_name': user.last_name,
+    }, status=status.HTTP_200_OK)
+    
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+def create_posts(request):
+    
+    # Get max_id and handle empty table case
+    max_id = Posts.objects.all().aggregate(models.Max('id'))['id__max'] or 0
+
+    # Extract the file from the request
+    image = request.FILES.get('image')
+    # print(image.read())
+    
+    if not image:
+        return Response({'error': 'No image provided'}, status=status.HTTP_400_BAD_REQUEST)
+
+    # Generate a unique filename
+    filename = f"{max_id + 1}_{image.name}"
+    print('filename', filename)
+    
+    try:
+        print("REACHING")
+        # Upload the image to Supabase storage
+        upload_response = supabase.storage.from_('posts').upload(filename,image.read())
+
+        print("REACHED")
+    
+        if not upload_response:
+            print("DID NOT REACHED")
+            return Response({'error': 'Failed to upload image to Supabase'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        
+        # Get the public URL of the uploaded image
+        image_url = supabase.storage.from_('posts').get_public_url(filename)
+        print("image_url", image_url)
+        
+        # Prepare post data
+        data = {
+            "description": request.data.get("description"),
+            "image": request.data.get("image"), 
+            "image": image_url, 
+            "user_id": request.user.id
+            }
+        
+
+        print("data", data)
+        # Serialize and save the post
+        serializer = PostsSerializer(data=data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        print(serializer.errors)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    except Exception as e:
+        print("error :", str(e))
+        return Response({'error': f"Image upload failed: {str(e)}"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+@api_view(['PUT'])
+@permission_classes([IsAuthenticated])
+def update_posts(request, post_id):
+    try:
+        post = Posts.objects.get(id=post_id)
+    except Posts.DoesNotExist:
+        return Response({'error': 'Post not found.'}, status=status.HTTP_404_NOT_FOUND)
+
+    serializer = PostsSerializer(post, data=request.data, partial=True)
+    
+    if serializer.is_valid():
+        serializer.save()
+        return Response(serializer.data, status=status.HTTP_200_OK)
+    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+@api_view(['DELETE'])
+@permission_classes([IsAuthenticated])
+def delete_post(request, post_id):
+    try:
+        post = Posts.objects.get(id=post_id)
+    except Posts.DoesNotExist:
+        return Response({'error': 'Post not found.'}, status=status.HTTP_404_NOT_FOUND)
+
+    post.delete()
+    return Response({'message': 'Post deleted successfully.'}, status=status.HTTP_204_NO_CONTENT)
+
+@api_view(['GET'])
+@permission_classes([AllowAny])
+def post_details(request, post_id):
+    post = Posts.objects.get(id=post_id)
+    user = post.user_id
+    return Response({
+        'id': post.id,
+        'author': user.username,
+        'profile_pic': user.profile_picture,
+        'url': post.image,
+        'description': post.description,
+        'likes': post.likes,
+        'time_created': post.time_created,
+        
+    }, status=status.HTTP_200_OK)
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def home_posts(request):
+    # Fetch all posts (you can add filters if needed)
+    posts = Posts.objects.all().order_by('-time_created')
+    # Serialize all posts
+    serializer = PostsSerializer(posts, many=True)
+    return Response(serializer.data)

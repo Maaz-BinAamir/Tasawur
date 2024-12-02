@@ -2,7 +2,6 @@ import { useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 
-
 function LoginForm() {
   const [formData, setFormData] = useState({
     username: "",
@@ -47,7 +46,7 @@ function LoginForm() {
 
       console.log("User Profile:", profileResponse.data);
       setResponseMessage(`${profileResponse.data.username}`);
-      navigate("/HomePosts");
+      navigate("/homeposts");
     } catch (error) {
       if (error.response) {
         setResponseMessage(
@@ -62,34 +61,34 @@ function LoginForm() {
 
   return (
     <>
-    <form onSubmit={handleSubmit}>
-      <h2>Login</h2>
-      <div>
-        <label>Username:</label>
-        <input
-          type="text"
-          name="username"
-          value={formData.username}
-          onChange={handleChange}
-        />
-      </div>
-      <div>
-        <label>Password:</label>
-        <input
-          type="password"
-          name="password"
-          value={formData.password}
-          onChange={handleChange}
-        />
-      </div>
-      <button type="submit">Login</button>
-      {responseMessage && <p>Welcome! {responseMessage}</p>}
-    </form>
+      <form onSubmit={handleSubmit}>
+        <h2>Login</h2>
+        <div>
+          <label>Username:</label>
+          <input
+            type="text"
+            name="username"
+            value={formData.username}
+            onChange={handleChange}
+          />
+        </div>
+        <div>
+          <label>Password:</label>
+          <input
+            type="password"
+            name="password"
+            value={formData.password}
+            onChange={handleChange}
+          />
+        </div>
+        <button type="submit">Login</button>
+        {responseMessage && <p>Welcome! {responseMessage}</p>}
+      </form>
 
-    <p>
+      <p>
         If you do not have an account, click here to{" "}
         <button onClick={() => navigate("/SignUpForm")}>Sign Up</button>
-    </p>
+      </p>
     </>
   );
 }

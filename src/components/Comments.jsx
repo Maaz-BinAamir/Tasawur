@@ -1,22 +1,29 @@
 import "../App.css";
 import { useState, useEffect } from "react";
 
-function OneComment({ id, username, content, likes, createdAt, onLike, hasLiked, profilePic }) {
+function OneComment({
+  id,
+  username,
+  content,
+  likes,
+  createdAt,
+  onLike,
+  hasLiked,
+  profilePic,
+}) {
   const [currentLikes, setCurrentLikes] = useState(likes);
 
   const handleLike = () => {
     if (!hasLiked) {
       setCurrentLikes(currentLikes + 1);
-      onLike(id); 
+      onLike(id);
     }
   };
 
   return (
     <div className="comment">
       <div>
-      <img
-        src={profilePic} className="pfp"
-      />
+        <img src={profilePic} className="pfp" />
         <strong>{username}</strong>
       </div>
       <div>{content}</div>
@@ -56,7 +63,7 @@ function MakeComment({ onAddComment }) {
   );
 }
 
-function Comments({postID}) {
+function Comments({ postID }) {
   const getComments = async () => {
     return [
       {
@@ -66,7 +73,8 @@ function Comments({postID}) {
         userId: "1",
         likes: 4,
         createdAt: "2023-08-16T23:00:33.010+02:00",
-        profilePic: "https://i.pinimg.com/enabled/236x/49/34/44/493444050c86439c4cd995e5c079bb72.jpg",
+        profilePic:
+          "https://i.pinimg.com/enabled/236x/49/34/44/493444050c86439c4cd995e5c079bb72.jpg",
       },
       {
         id: "2",
@@ -75,22 +83,22 @@ function Comments({postID}) {
         userId: "2",
         likes: 5,
         createdAt: "2023-08-16T23:00:33.010+02:00",
-        profilePic: "https://i.pinimg.com/enabled/236x/49/34/44/493444050c86439c4cd995e5c079bb72.jpg",
+        profilePic:
+          "https://i.pinimg.com/enabled/236x/49/34/44/493444050c86439c4cd995e5c079bb72.jpg",
       },
     ];
   };
-  
+
   const createComment = async (text) => {
     return {
       id: Math.random().toString(36).substr(2, 9),
       body: text,
       userId: "1",
-      likes:0,
+      likes: 0,
       username: "Shasha",
       createdAt: new Date().toISOString(),
     };
   };
-  
 
   const [comments, setComments] = useState([]);
   const [likedComments, setLikedComments] = useState(() => {
@@ -114,7 +122,7 @@ function Comments({postID}) {
   };
 
   return (
-    <div className="container">
+    <div>
       <h2>Comments</h2>
       <MakeComment onAddComment={addComment} />
       {comments.length === 0 ? (

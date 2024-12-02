@@ -1,13 +1,37 @@
-import "../App.css";
+import { useState, useEffect } from "react";
+import "../style/HomePosts.css";
 import NavBar from "./NavBar.jsx";
-import links from "./dummy_items/links.js";
 import { useNavigate } from "react-router-dom";
+import axios from "axios";
 
 function HomePosts() {
+  const [posts, setPosts] = useState([]);
   const navigate = useNavigate();
 
-  const openPost = (postID) => {
-    navigate(`/Post/${postID}`);
+  useEffect(() => {
+    const fetchPosts = async () => {
+      const authToken = JSON.parse(localStorage.getItem("authToken"));
+      try {
+        const response = await axios.get(
+          "http://127.0.0.1:8000/api/homeposts/",
+          {
+            headers: {
+              Authorization: `Bearer ${authToken.access}`,
+            },
+          }
+        );
+        setPosts(response.data);
+        console.log(response.data);
+      } catch (error) {
+        console.error("Error fetching posts:", error);
+      }
+    };
+
+    fetchPosts();
+  }, []);
+
+  const openPost = (postId) => {
+    navigate(`/post/${postId}`);
   };
 
   return (
@@ -15,13 +39,13 @@ function HomePosts() {
       <NavBar />
 
       <div className="container">
-        {links.map((link, i) => (
+        {posts.map((post, i) => (
           <img
-            src={link.url}
+            src={post.image}
             alt={`Post ${i + 1}`}
             key={i}
-            onClick={() => openPost(i)}
-            id={link.id}
+            onClick={() => openPost(post.id)}
+            id={post.id}
           />
         ))}
       </div>

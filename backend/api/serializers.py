@@ -1,13 +1,18 @@
-from django.contrib.auth.models import User
+from .models import CustomUser, Posts
 from rest_framework import serializers
 
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
-        model = User
+        model = CustomUser
         fields = ["id", "username", "email", "password"]
         extra_kwargs = {"password": {"write_only": True, "required": True}}
         
     def create(self, validated_data):
-        user = User.objects.create_user(**validated_data)
+        user = CustomUser.objects.create_user(**validated_data)
         return user
         
+class PostsSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Posts
+        fields = '__all__'
+        read_only_fields = ('time_created',)

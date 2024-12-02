@@ -1,0 +1,53 @@
+.NavBar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1.5rem 1rem;
+    background-color: #a06c0c;
+    color: rgb(255, 255, 255);
+  }
+  
+  .logo {
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: #ffffff;
+    gap: 3rem;
+    cursor: pointer;
+  }
+  
+  .searchBar {
+    display: flex;
+    gap: 1rem;
+    border-radius: 1cm;
+  }
+  
+  .searchBar input {
+    padding: 1rem 20rem;
+    font-size: 1rem;
+    border-radius: 0.75cm;
+    border: none;
+  }
+  
+  .searchBar button,
+  .messages,
+  .profile {
+    padding: 1rem 2rem;
+    font-size: 1rem;
+    background-color: #ffffff;
+    color: #a06c0c;
+    margin-right: 1rem;
+    border-radius: 0.75cm;
+    cursor: pointer;
+    border: none;
+  }
+  
+  
+  
+  .pfp {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    margin-right: 10px;
+  }
+  
+  
