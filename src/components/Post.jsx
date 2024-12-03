@@ -12,6 +12,8 @@ function Post() {
   const [currentLikes, setCurrentLikes] = useState(0);
   const [hasLiked, setHasLiked] = useState(false);
   const [loading, setLoading] = useState(true);
+  const [showComments, setShowComments] = useState(false);
+
 
   // Fetch post data when the component mounts
   useEffect(() => {
@@ -74,6 +76,11 @@ function Post() {
     setHasLiked((liked) => !liked);
   };
 
+  const toggleComments = () => {
+    setShowComments((prevShowComments) => !prevShowComments);
+  };
+
+
   return (
     <>
       <NavBar />
@@ -106,7 +113,13 @@ function Post() {
                 <p>{post.description}</p>
               </div>
               <h2>{post.createdAt}</h2>
-              <Comments postID={postID} />
+              <div>
+                <span>Comments</span>
+                <button onClick={toggleComments}>
+                  {showComments ? "^" : "ᵛ"}
+                </button>
+              </div>
+              {showComments && <Comments postID={postID} />}
             </div>
           </div>
         </>

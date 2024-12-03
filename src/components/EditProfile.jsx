@@ -1,6 +1,12 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
 import { useNavigate, useLocation } from "react-router-dom";
+import z from "zod";
+
+const editProfileSchema=z.object({
+  first_name: z.string().min(1, "This is a required field"),
+  last_name: z.string().min(1, "This is a required field"),
+})
 
 function EditProfile() {
   const [formData, setFormData] = useState({
@@ -14,6 +20,7 @@ function EditProfile() {
   const location = useLocation();
   const searchParams = new URLSearchParams(location.search);
   const signup = searchParams.get("signup");
+  const [errors, setErrors] = useState({});
 
   useEffect(() => {
     const fetchProfile = async () => {
@@ -47,7 +54,11 @@ function EditProfile() {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
+
     try {
+      editProfileSchema.parse(formData);
+      setErrors({});
+
       const authToken = JSON.parse(localStorage.getItem("authToken")) || {};
       const formDataToSend = new FormData();
 
@@ -77,7 +88,13 @@ function EditProfile() {
         navigate("/profile");
       }
     } catch (error) {
-      if (error.response) {
+      if (error instanceof z.ZodError) {
+        const fieldErrors = error.errors.reduce((acc, err) => {
+          acc[err.path[0]] = err.message;
+          return acc;
+        }, {});
+        setErrors(fieldErrors);}
+      else if (error.response) {
         console.log(
           error.response.data.error || "An error occurred. Please try again."
         );
@@ -121,6 +138,7 @@ function EditProfile() {
             value={formData.first_name}
             onChange={handleChange}
           />
+          {errors.first_name && <p style={{ color: "red" }}>{errors.first_name}</p>}
         </div>
         <div>
           <label>Last Name:</label>
@@ -130,6 +148,7 @@ function EditProfile() {
             value={formData.last_name}
             onChange={handleChange}
           />
+          {errors.last_name && <p style={{ color: "red" }}>{errors.last_name}</p>}
         </div>
         <div>
           <label>Bio:</label>
