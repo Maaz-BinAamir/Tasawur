@@ -1,6 +1,7 @@
 import { useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import GoogleLoginButton from "./GoogleLogin";
 
 function LoginForm() {
   const [formData, setFormData] = useState({
@@ -46,7 +47,12 @@ function LoginForm() {
 
       console.log("User Profile:", profileResponse.data);
       setResponseMessage(`${profileResponse.data.username}`);
-      navigate("/homeposts");
+
+      if (profileResponse.data.bio === null) {
+        navigate("/edit_profile?signup=True");
+      } else {
+        navigate("/homeposts");
+      }
     } catch (error) {
       if (error.response) {
         setResponseMessage(
@@ -85,9 +91,11 @@ function LoginForm() {
         {responseMessage && <p>Welcome! {responseMessage}</p>}
       </form>
 
+      <GoogleLoginButton />
+
       <p>
         If you do not have an account, click here to{" "}
-        <button onClick={() => navigate("/SignUpForm")}>Sign Up</button>
+        <button onClick={() => navigate("/signup")}>Sign Up</button>
       </p>
     </>
   );

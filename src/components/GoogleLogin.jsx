@@ -1,12 +1,12 @@
 import { GoogleLogin, GoogleOAuthProvider } from "@react-oauth/google";
 import axios from "axios";
-import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 const clientId =
   "168844986010-vejil6mcti4b0aarthtbgbj0ivf3f2ql.apps.googleusercontent.com";
 
 function GoogleLoginButton() {
-  const [ResponseMessage, setResponseMessage] = useState("");
+  const navigate = useNavigate();
 
   const handleSuccess = async (credentialResponse) => {
     const token = credentialResponse.credential;
@@ -32,7 +32,12 @@ function GoogleLoginButton() {
       );
 
       console.log("User Profile:", profileResponse.data);
-      setResponseMessage(`Welcome! ${profileResponse.data.username}`);
+
+      if (profileResponse.data.bio === null) {
+        navigate("/edit_profile?signup=True");
+      } else {
+        navigate("/homeposts");
+      }
     } catch (error) {
       console.error("Login Error:", error);
     }
@@ -47,7 +52,6 @@ function GoogleLoginButton() {
       <GoogleOAuthProvider clientId={clientId}>
         <GoogleLogin onSuccess={handleSuccess} onError={handleError} />
       </GoogleOAuthProvider>
-      {ResponseMessage && <p>{ResponseMessage}</p>}
     </>
   );
 }

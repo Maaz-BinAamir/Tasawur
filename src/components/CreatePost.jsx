@@ -60,7 +60,6 @@ export default function CreatePost() {
             id="image"
             accept="image/*"
             onChange={(e) => setImage(e.target.files && e.target.files[0])}
-            className="mt-1 block w-full"
           />
         </div>
         <div>
@@ -70,7 +69,6 @@ export default function CreatePost() {
             value={description}
             onChange={(e) => setDescription(e.target.value)}
             placeholder="Enter your post description"
-            className="mt-1"
           />
         </div>
         {error && <p>{error}</p>}

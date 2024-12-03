@@ -1,6 +1,5 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import GoogleLoginButton from "./GoogleLogin";
 
 function SignUpForm() {
   const [formData, setFormData] = useState({
@@ -31,7 +30,7 @@ function SignUpForm() {
       });
       const data = await response.json();
       console.log(data);
-      navigate("/homeposts");
+      navigate("/");
     } catch (error) {
       console.error("Error:", error);
     }
@@ -70,7 +69,6 @@ function SignUpForm() {
         </div>
         <button type="submit">Sign Up</button>
       </form>
-      <GoogleLoginButton />
 
       <p>
         Already Have an account? Click here to{" "}

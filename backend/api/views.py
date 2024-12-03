@@ -65,7 +65,7 @@ def google_login(request):
         email = idinfo.get('email')
         first_name = idinfo.get('given_name', '')
         last_name = idinfo.get('family_name', '')
-
+        
         user, created = CustomUser.objects.get_or_create(
             email=email,
             defaults={
@@ -96,12 +96,13 @@ def user_profile(request):
         'profile_pic': user.profile_picture,
         'first_name': user.first_name,
         'last_name': user.last_name,
+        'bio': user.bio,
     }, status=status.HTTP_200_OK)
         
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
 def other_user_profile(request, user_id):
-    user = CustomUser.objects.all().get(id=user_id)
+    user = CustomUser.objects.get(id=user_id)
     return Response({
         'id': user.id,
         'email': user.email,
@@ -109,12 +110,57 @@ def other_user_profile(request, user_id):
         'profile_pic': user.profile_picture,
         'first_name': user.first_name,
         'last_name': user.last_name,
+        'bio': user.bio,
     }, status=status.HTTP_200_OK)
+
+@api_view(['PUT'])
+@permission_classes([IsAuthenticated])
+def update_user(request):
+    try:
+        user = CustomUser.objects.get(id=request.user.id)
+        
+    except CustomUser.DoesNotExist:
+        return Response({'error': 'Post not found.'}, status=status.HTTP_404_NOT_FOUND)
+        
+    profile_picture = request.FILES.get('profile_picture')
+    if profile_picture:
+        filename = f"{user.id}_{profile_picture.name}"
+        
+        try:
+            # Remove old image if exists
+            if user.profile_picture:
+                old_filename = user.profile_picture.split('/')[-1][:-1]
+                supabase.storage.from_('profiles').remove([old_filename])
+
+            # Upload the new profile picture
+            upload_response = supabase.storage.from_('profiles').upload(filename, profile_picture.read())
+            if not upload_response:
+                return Response({'error': 'Failed to upload image to Supabase.'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+            
+            # Get the public URL of the uploaded image
+            image_url = supabase.storage.from_('profiles').get_public_url(filename)
+            user.profile_picture = image_url
+            print("user's pic", user.profile_picture)
+        except Exception as e:
+            print('error', f"Image upload failed: {str(e)}")
+            return Response({'error': f"Image upload failed: {str(e)}"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+    data = {
+        "first_name": request.data.get("first_name"),
+        "last_name": request.data.get("last_name"),
+        "bio": request.data.get("bio"),
+    }
     
+    serializer = UserSerializer(user, data=data, partial=True)
+    
+    if serializer.is_valid():
+        serializer.save()
+        return Response(serializer.data, status=status.HTTP_200_OK)
+    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
 def create_posts(request):
-    
     # Get max_id and handle empty table case
     max_id = Posts.objects.all().aggregate(models.Max('id'))['id__max'] or 0
 
@@ -130,14 +176,11 @@ def create_posts(request):
     print('filename', filename)
     
     try:
-        print("REACHING")
         # Upload the image to Supabase storage
         upload_response = supabase.storage.from_('posts').upload(filename,image.read())
 
-        print("REACHED")
     
         if not upload_response:
-            print("DID NOT REACHED")
             return Response({'error': 'Failed to upload image to Supabase'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
         
         # Get the public URL of the uploaded image
@@ -152,7 +195,6 @@ def create_posts(request):
             "user_id": request.user.id
             }
         
-
         print("data", data)
         # Serialize and save the post
         serializer = PostsSerializer(data=data)

@@ -16,7 +16,7 @@ function Profile() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    const fetchPost = async () => {
+    const fetchProfile = async () => {
       try {
         setLoading(true);
         const authToken = JSON.parse(localStorage.getItem("authToken")) || {};
@@ -39,7 +39,7 @@ function Profile() {
       }
     };
 
-    fetchPost();
+    fetchProfile();
   }, [id]);
 
   const openEditProfile = () => {
@@ -68,10 +68,10 @@ function Profile() {
             <div>{user.username}</div>
           </div>
           <div>
-            Followers{user.followers} Following {user.following}
+            <div>{user.bio}</div>
           </div>
           <div>
-            <div>{user.bio}</div>
+            Followers{user.followers} Following {user.following}
           </div>
           <div>
             <button onClick={openEditProfile}>Edit Profile</button>
