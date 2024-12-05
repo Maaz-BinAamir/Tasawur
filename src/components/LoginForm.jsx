@@ -95,15 +95,19 @@ function LoginForm() {
             <span></span>
           </div>
           <input type="submit" value="Login" />
-          {responseMessage && <p className="responseMessage">{responseMessage}</p>}
+          {responseMessage && (
+            <p className="responseMessage">{responseMessage}</p>
+          )}
         </form>
-        
+
         <div className="logOr">or</div>
-       
-        <div><GoogleLoginButton /></div>
-        
+
+        <div>
+          <GoogleLoginButton />
+        </div>
+
         <div className="Logsignup_link">
-          Don't have an account?{" "}
+          Don&apos;t have an account?{" "}
           <a href="#" onClick={() => navigate("/SignUpForm")}>
             Sign Up
           </a>
@@ -112,19 +116,14 @@ function LoginForm() {
 
       {/* Right panel */}
       <div className="panel info-panel">
-  
-  <div className="Logbox-container">
-    <div className="Logbox">
-  
-    </div>
-    <div className="Logbox">
-      <span>Log In</span>
-    </div>
-    <div className="Logbox">
-     
-    </div>
-  </div>
-</div>
+        <div className="Logbox-container">
+          <div className="Logbox"></div>
+          <div className="Logbox">
+            <span>Log In</span>
+          </div>
+          <div className="Logbox"></div>
+        </div>
+      </div>
     </div>
   );
 }

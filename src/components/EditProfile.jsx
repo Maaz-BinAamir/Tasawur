@@ -2,8 +2,7 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import { useNavigate, useLocation } from "react-router-dom";
 import z from "zod";
-import "../style/EditProfile.css"; 
-
+import "../style/EditProfile.css";
 
 const editProfileSchema = z.object({
   first_name: z.string().min(1, "This is a required field"),
@@ -116,71 +115,77 @@ const EditProfile = () => {
     <div className="wrapper">
       <div className={`login-text ${isExpanded ? "expand" : ""}`}>
         <button className="cta" onClick={toggleLogin}>
-          <i className={`fas fa-chevron-${isExpanded ? "up" : "down"} fa-1x`}></i>
+          <i
+            className={`fas fa-chevron-${isExpanded ? "up" : "down"} fa-1x`}
+          ></i>
         </button>
         <div className={`text ${isExpanded ? "show-hide" : ""}`}>
           <form onSubmit={handleSubmit}>
             <h2>User Details</h2>
-            <div class="profile-container">
-  <label>Profile Picture:</label>
-  {image ? (
-    <img
-      src={imageUrl ? imageUrl : image}
-      alt="Profile"
-      class="profile-img"
-    />
-  ) : (
-    <p>No profile picture available</p>
-  )}
-  <input
-    type="file"
-    id="image"
-    accept="image/*"
-    onChange={(e) => {
-      setImage(e.target.files && e.target.files[0]);
-      setImageUrl(URL.createObjectURL(e.target.files[0]));
-    }}
-    class="profile-upload"
-  />
+            <div className="profile-container">
+              <label>Profile Picture:</label>
+              {image ? (
+                <img
+                  src={imageUrl ? imageUrl : image}
+                  alt="Profile"
+                  className="profile-img"
+                />
+              ) : (
+                <p>No profile picture available</p>
+              )}
+              <input
+                type="file"
+                id="image"
+                accept="image/*"
+                onChange={(e) => {
+                  setImage(e.target.files && e.target.files[0]);
+                  setImageUrl(URL.createObjectURL(e.target.files[0]));
+                }}
+                className="profile-upload"
+              />
 
-  <div class="input-group">
-    <input
-      type="text"
-      placeholder="First Name"
-      name="first_name"
-      value={formData.first_name}
-      onChange={handleChange}
-      class="input-field"
-      style={{ color: 'black' }}
-    />
-    {errors.first_name && <p class="error-text">{errors.first_name}</p>}
-  </div>
+              <div className="input-group">
+                <input
+                  type="text"
+                  placeholder="First Name"
+                  name="first_name"
+                  value={formData.first_name}
+                  onChange={handleChange}
+                  className="input-field"
+                  style={{ color: "black" }}
+                />
+                {errors.first_name && (
+                  <p className="error-text">{errors.first_name}</p>
+                )}
+              </div>
 
-  <div class="input-group">
-    <input
-      type="text"
-      placeholder="Last Name"
-      name="last_name"
-      value={formData.last_name}
-      onChange={handleChange}
-      class="input-field"
-      style={{ color: 'black' }}
-    />
-    {errors.last_name && <p class="error-text">{errors.last_name}</p>}
-  </div>
+              <div className="input-group">
+                <input
+                  type="text"
+                  placeholder="Last Name"
+                  name="last_name"
+                  value={formData.last_name}
+                  onChange={handleChange}
+                  className="input-field"
+                  style={{ color: "black" }}
+                />
+                {errors.last_name && (
+                  <p className="error-text">{errors.last_name}</p>
+                )}
+              </div>
 
-  <div class="input-group">
-    <input
-      type="text"
-      name="bio"
-      placeholder="Bio"
-      style={{ color: 'black' }}
-      value={formData.bio}
-      onChange={handleChange}
-      class="input-field"
-    />
-  </div>
-</div>
+              <div className="input-group">
+                <input
+                  type="text"
+                  name="bio"
+                  placeholder="Bio"
+                  style={{ color: "black" }}
+                  value={formData.bio}
+                  onChange={handleChange}
+                  className="input-field"
+                />
+              </div>
+            </div>
           </form>
         </div>
       </div>

@@ -1,5 +1,5 @@
-import "../style/NavBar.css"; 
-import "@fortawesome/fontawesome-free/css/all.min.css"; 
+import "../style/NavBar.css";
+import "@fortawesome/fontawesome-free/css/all.min.css";
 import { useNavigate } from "react-router-dom";
 
 function NavBar() {
@@ -28,10 +28,10 @@ function NavBar() {
 
         {/* Icons Section */}
         <div className="links">
-          <a href="#" className="icon" flex onClick={openHome}>
+          <a href="#" className="icon" onClick={openHome}>
             <i className="fas fa-home"></i>
           </a>
-            <a href="#" className="icon">
+          <a href="#" className="icon">
             <i className="fas fa-comment-dots"></i>
           </a>
           <a href="#" className="icon" onClick={openProfile}>

@@ -2,11 +2,11 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import z from "zod";
 
-const signUpSchema=z.object({
+const signUpSchema = z.object({
   username: z.string().min(1, "This is a required field"),
   email: z.string().email("Invalid format"),
   password: z.string().min(6, "Password must be at least 6 characters"),
-})
+});
 
 function SignUpForm() {
   const [formData, setFormData] = useState({
@@ -47,11 +47,12 @@ function SignUpForm() {
           acc[err.path[0]] = err.message;
           return acc;
         }, {});
-        setErrors(fieldErrors);}
-      else{
-      console.error("Error:", error);
+        setErrors(fieldErrors);
+      } else {
+        console.error("Error:", error);
+      }
     }
-  }}
+  }
 
   return (
     <div className="LogIncontainer">
@@ -92,7 +93,8 @@ function SignUpForm() {
             />
             {errors.password && <p className="error">{errors.password}</p>}
           </div>
-          <input type="submit" value="Sign Up" />        </form>
+          <input type="submit" value="Sign Up" />{" "}
+        </form>
         <div className="Logsignup_link">
           Already have an account?{" "}
           <a href="#" onClick={() => navigate("/")}>
@@ -102,19 +104,14 @@ function SignUpForm() {
       </div>
       {/* Right panel */}
       <div className="panel info-panel">
-  
-  <div className="Logbox-container">
-    <div className="Logbox">
-  
-    </div>
-    <div className="Logbox">
-      <span>Sign Up</span>
-    </div>
-    <div className="Logbox">
-     
-    </div>
-  </div>
-</div>
+        <div className="Logbox-container">
+          <div className="Logbox"></div>
+          <div className="Logbox">
+            <span>Sign Up</span>
+          </div>
+          <div className="Logbox"></div>
+        </div>
+      </div>
     </div>
   );
 }
