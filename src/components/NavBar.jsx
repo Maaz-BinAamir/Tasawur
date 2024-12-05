@@ -1,4 +1,5 @@
-import "../style/NavBar.css";
+import "../style/NavBar.css"; 
+import "@fortawesome/fontawesome-free/css/all.min.css"; 
 import { useNavigate } from "react-router-dom";
 
 function NavBar() {
@@ -15,23 +16,27 @@ function NavBar() {
   return (
     <>
       <nav className="NavBar">
+        {/* Logo Section */}
         <div className="logo" onClick={openHome}>
-          MyLogo
+          <img src="logo.jpg" alt="Logo" className="logo-img" />
         </div>
+
+        {/* Search Bar Section */}
         <div className="searchBar">
-          <input type="text" placeholder="Search..." />
-          <button>Search</button>
+          <input type="text" className="search" placeholder="Search" />
         </div>
-        <div>
-          <button onClick={openProfile}>
-            <img src="" alt="Profile" />
-          </button>
-          <button onClick={openHome}>
-            <img src="" alt="Home" />
-          </button>
-          <button>
-            <img src="" alt="Chats" />
-          </button>
+
+        {/* Icons Section */}
+        <div className="links">
+          <a href="#" className="icon" flex onClick={openHome}>
+            <i className="fas fa-home"></i>
+          </a>
+            <a href="#" className="icon">
+            <i className="fas fa-comment-dots"></i>
+          </a>
+          <a href="#" className="icon" onClick={openProfile}>
+            <i className="fas fa-user"></i>
+          </a>
         </div>
       </nav>
     </>

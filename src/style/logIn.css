@@ -1,0 +1,216 @@
+@import url('https://fonts.googleapis.com/css2?family=Arimo:wght@400;700&display=swap');
+
+body {
+    margin: 0;
+    padding: 0;
+    font-family: Roboto;
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-color: #ffff;
+    height: 100vh;
+    overflow: hidden;
+  }
+  
+  .LogIncontainer {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    background: #ffffff;
+  }
+  
+  .panel {
+    width: 30vw;
+    height: 60vh;
+    background: white;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.399);
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+  }
+  
+  .login-panel {
+    border-right: 1px solid #dcdcdc;
+  }
+  
+  .info-panel {
+    background-color: #FFC0CB; 
+    color: #fff; 
+    text-align: center;
+    font-size: 50px; 
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column; 
+    position: relative;
+    padding: 20px;
+    gap: 20px;
+  }
+  
+  .info-panel .Logbox-container {
+    display: flex;
+    justify-content: space-between;
+    width: 100%; 
+    gap: 0px; 
+  }
+  
+  .Logbox span {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    font-size: 80px;
+    font-family: 'Arimo', sans-serif; 
+    color: #fff;
+    text-shadow: 2px 2px 5px rgba(212, 65, 107, 0.7);
+    transform: translate(-50%, -50%);
+    z-index: 1; 
+  }
+  
+  .info-panel .Logbox {
+    flex: 1; 
+    height: 60vh; 
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); 
+  }
+  
+  /* Colors for the boxes */
+  .info-panel .Logbox:nth-child(1) {
+    background-color: #FFB6C1; 
+  }
+  
+  .info-panel .Logbox:nth-child(2) {
+    background-color: #ffd6cd; 
+  }
+  
+  .info-panel .Logbox:nth-child(3) {
+    background-color: #eeddc9; 
+  }
+
+  .logOr
+  {
+    font-size: 15px;
+    padding: 5px;
+  }
+  
+  
+  .center {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 29vw;
+    background: white;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  }
+  
+  .center h1 {
+    text-align: center;
+    padding: 0 0 20px 0;
+    border-bottom: 1px solid silver;
+  }
+  
+  .center form {
+    padding: 0 40px;
+    box-sizing: border-box;
+  }
+  
+  form .Logtxt_field {
+    position: relative;
+    border-bottom: 2px solid #adadad;
+    margin: 30px 0;
+  }
+  
+  .Logtxt_field input {
+    width: 100%;
+    padding: 0 5px;
+    height: 40px;
+    font-size: 16px;
+    border: none;
+    background: none;
+    outline: none;
+  }
+  
+  .Logtxt_field label {
+    position: absolute;
+    top: 50%;
+    left: 5px;
+    color: #adadad;
+    transform: translateY(-50%);
+    font-size: 16px;
+    pointer-events: none;
+  }
+  
+  .Logtxt_field span::before {
+    content: '';
+    position: absolute;
+    top: 40px;
+    left: 0;
+    width: 0px;
+    height: 0.25px;
+    opacity: 50;
+    background: #5f5f66;
+    transition: .5s;
+  }
+  
+  .Logtxt_field input:focus ~ label,
+  .Logtxt_field input:valid ~ label {
+    top: -5px;
+    color: #5f5f66;
+  }
+  
+  .Logtxt_field input:focus ~ span::before,
+  .Logtxt_field input:valid ~ span::before {
+    width: 100%;
+  }
+  
+  .pass {
+    margin: -5px 0 20px 5px;
+    color: #a6a6a6;
+    cursor: pointer;
+  }
+  
+  .pass:hover {
+    text-decoration: underline;
+  }
+  
+  input[type="Submit"] {
+    width: 100%;
+    height: 50px;
+    border: 0.5px solid;
+    border-radius: 25px;
+    font-size: 18px;
+    font-weight: 700;
+    cursor: pointer;
+  }
+  
+  input[type="Submit"]:hover {
+    background: #FFC0CB;
+    color: #e9f4fb;
+    transition: .5s;
+  }
+  
+  .Logsignup_link {
+    margin: 30px 0;
+    text-align: center;
+    font-size: 16px;
+    color: #666666;
+  }
+  
+  .Logsignup_link a {
+    color: #FFC0CB;
+    text-decoration: none;
+  }
+  
+  .Logsignup_link a:hover {
+    text-decoration: underline;
+  }
+  
+  .HomeAbout {
+    width: 100vw;
+    height: 25vh;
+  }
+  

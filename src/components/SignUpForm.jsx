@@ -54,47 +54,68 @@ function SignUpForm() {
   }}
 
   return (
-    <>
-      <form onSubmit={handleSubmit}>
-        <h2>Sign Up</h2>
-        <div>
-          <label>Username:</label>
-          <input
-            type="text"
-            name="username"
-            value={formData.username}
-            onChange={handleChange}
-          />
-          {errors.username && <p style={{ color: "red" }}>{errors.username}</p>}
+    <div className="LogIncontainer">
+      {/*left panel with sign info */}
+      <div className="panel login-panel">
+        <form onSubmit={handleSubmit}>
+          <h1>Sign Up</h1>
+          <div className="Logtxt_field">
+            <label>Username</label>
+            <input
+              id="username"
+              type="text"
+              name="username"
+              value={formData.username}
+              onChange={handleChange}
+            />
+            {errors.username && <p className="error">{errors.username}</p>}
+          </div>
+          <div className="Logtxt_field">
+            <label>Email</label>
+            <input
+              id="email"
+              type="email"
+              name="email"
+              value={formData.email}
+              onChange={handleChange}
+            />
+            {errors.email && <p className="error">{errors.email}</p>}
+          </div>
+          <div className="Logtxt_field">
+            <label>Password</label>
+            <input
+              id="password"
+              type="password"
+              name="password"
+              value={formData.password}
+              onChange={handleChange}
+            />
+            {errors.password && <p className="error">{errors.password}</p>}
+          </div>
+          <input type="submit" value="Sign Up" />        </form>
+        <div className="Logsignup_link">
+          Already have an account?{" "}
+          <a href="#" onClick={() => navigate("/")}>
+            Login
+          </a>
         </div>
-        <div>
-          <label>Email:</label>
-          <input
-            type="email"
-            name="email"
-            value={formData.email}
-            onChange={handleChange}
-          />
-           {errors.email && <p style={{ color: "red" }}>{errors.email}</p>}
-        </div>
-        <div>
-          <label>Password:</label>
-          <input
-            type="password"
-            name="password"
-            value={formData.password}
-            onChange={handleChange}
-          />
-           {errors.password && <p style={{ color: "red" }}>{errors.password}</p>}
-        </div>
-        <button type="submit">Sign Up</button>
-      </form>
-
-      <p>
-        Already Have an account? Click here to{" "}
-        <button onClick={() => navigate("/")}>Login</button>
-      </p>
-    </>
+      </div>
+      {/* Right panel */}
+      <div className="panel info-panel">
+  
+  <div className="Logbox-container">
+    <div className="Logbox">
+  
+    </div>
+    <div className="Logbox">
+      <span>Sign Up</span>
+    </div>
+    <div className="Logbox">
+     
+    </div>
+  </div>
+</div>
+    </div>
   );
 }
 

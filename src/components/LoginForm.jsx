@@ -1,4 +1,5 @@
 import { useState } from "react";
+import "../style/logIn.css";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import GoogleLoginButton from "./GoogleLogin";
@@ -66,38 +67,65 @@ function LoginForm() {
   };
 
   return (
-    <>
-      <form onSubmit={handleSubmit}>
-        <h2>Login</h2>
-        <div>
-          <label>Username:</label>
-          <input
-            type="text"
-            name="username"
-            value={formData.username}
-            onChange={handleChange}
-          />
+    <div className="LogIncontainer">
+      {/* Left panel with login form */}
+      <div className="panel login-panel">
+        <form onSubmit={handleSubmit}>
+          <h1>Login</h1>
+          <div className="Logtxt_field">
+            <input
+              type="text"
+              name="username"
+              value={formData.username}
+              onChange={handleChange}
+              required
+            />
+            <label>Username</label>
+            <span></span>
+          </div>
+          <div className="Logtxt_field">
+            <input
+              type="password"
+              name="password"
+              value={formData.password}
+              onChange={handleChange}
+              required
+            />
+            <label>Password</label>
+            <span></span>
+          </div>
+          <input type="submit" value="Login" />
+          {responseMessage && <p className="responseMessage">{responseMessage}</p>}
+        </form>
+        
+        <div className="logOr">or</div>
+       
+        <div><GoogleLoginButton /></div>
+        
+        <div className="Logsignup_link">
+          Don't have an account?{" "}
+          <a href="#" onClick={() => navigate("/SignUpForm")}>
+            Sign Up
+          </a>
         </div>
-        <div>
-          <label>Password:</label>
-          <input
-            type="password"
-            name="password"
-            value={formData.password}
-            onChange={handleChange}
-          />
-        </div>
-        <button type="submit">Login</button>
-        {responseMessage && <p>Welcome! {responseMessage}</p>}
-      </form>
+      </div>
 
-      <GoogleLoginButton />
-
-      <p>
-        If you do not have an account, click here to{" "}
-        <button onClick={() => navigate("/signup")}>Sign Up</button>
-      </p>
-    </>
+      {/* Right panel */}
+      <div className="panel info-panel">
+  
+  <div className="Logbox-container">
+    <div className="Logbox">
+  
+    </div>
+    <div className="Logbox">
+      <span>Log In</span>
+    </div>
+    <div className="Logbox">
+     
+    </div>
+  </div>
+</div>
+    </div>
   );
 }
 
