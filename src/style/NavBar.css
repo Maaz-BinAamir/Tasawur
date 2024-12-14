@@ -2,12 +2,12 @@ nav {
   display: flex;
   align-items: center;
   padding: 10px 20px;
-  position: fixed;
+  /* position: fixed; */
   background-color: #ffff;
   left: 0;
   right: 0;
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-  justify-content: space-between; 
+  justify-content: space-between;
 }
 
 .logo-img {
@@ -19,9 +19,8 @@ nav {
   flex: 1;
   display: flex;
   align-items: center;
-  width:fit-content ;
+  width: fit-content;
 }
-
 
 .search {
   flex: 1;
@@ -36,11 +35,11 @@ nav {
 .links {
   display: flex;
   gap: 15px;
-  align-items: center; 
+  align-items: center;
 }
 
 .icon {
-  font-size: 25px; 
+  font-size: 25px;
   color: #5f5f66;
   text-decoration: none;
   font-weight: 600;
@@ -52,4 +51,3 @@ nav {
   background: #dad9d9;
   border-radius: 90%;
 }
-

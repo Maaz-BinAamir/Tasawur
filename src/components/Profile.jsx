@@ -1,9 +1,8 @@
-// import getUser from "./dummy_items/dummy_users";
 import { useState, useEffect } from "react";
-import "../style/Profile.css";
-import NavBar from "./NavBar.jsx";
 import axios from "axios";
 import { useNavigate, useParams } from "react-router-dom";
+import NavBar from "./NavBar.jsx";
+import "../style/Profile.css";
 
 function Profile() {
   const { id } = useParams();
@@ -20,21 +19,21 @@ function Profile() {
       try {
         setLoading(true);
         const authToken = JSON.parse(localStorage.getItem("authToken")) || {};
+        console.log(id);
         const request_url = id
           ? `http://127.0.0.1:8000/api/profile/${id}`
           : `http://127.0.0.1:8000/api/profile`;
-        console.log(request_url);
 
         const response = await axios.get(request_url, {
           headers: {
             Authorization: `Bearer ${authToken.access}`,
           },
         });
-        console.log(response.data);
+
         setUser(response.data);
         setLoading(false);
       } catch (error) {
-        console.error("Error fetching post:", error);
+        console.error("Error fetching profile:", error);
         setLoading(false);
       }
     };
@@ -56,44 +55,99 @@ function Profile() {
       setCopied(true);
     });
   };
+
+  const openPost = (postId) => {
+    navigate(`/post/${postId}`);
+  };
+
+  if (loading) return <div className="loading">Loading...</div>;
+
   return (
     <>
       <NavBar />
-      {loading ? (
-        <h1>Loading</h1>
-      ) : (
-        <div className="profile">
-          <div className="profile">
-            <img src={user.profile_pic} className="profilepfp" />
-            <div>{user.username}</div>
-          </div>
-          <div>
-            <div>{user.bio}</div>
-          </div>
-          <div>
-            Followers{user.followers} Following {user.following}
-          </div>
-          <div>
-            <button onClick={openEditProfile}>Edit Profile</button>
-            <button onClick={openSharePopup}>Share Profile</button>
+      <div className="profile-container">
+        <div className="profile-header">
+          <img
+            src={user.profile_pic}
+            alt="Profile"
+            className="profile-picture"
+          />
 
-            {showPopup && (
-              <div className="popup">
-                <p>Share this link:</p>
-                <input
-                  type="text"
-                  value={window.location.href}
-                  readOnly
-                  className="popup-input"
-                />
-                <button onClick={handleCopy}>Copy Link</button>
-                {copied && <span className="copied-message">Link copied!</span>}
-                <button onClick={() => setShowPopup(false)}>Close</button>
-              </div>
-            )}
+          <div className="profile-details">
+            <h1 className="profile-username">{user.username}</h1>
+
+            <div className="profile-stats">
+              <span>{user.posts.length} posts</span>
+              <span>{user.followers} followers</span>
+              <span>{user.following} following</span>
+            </div>
+
+            <p className="profile-bio">{user.bio}</p>
+
+            <div className="profile-actions">
+              <button
+                onClick={openEditProfile}
+                className="profile-btn edit-btn"
+              >
+                Edit Profile
+              </button>
+              <button
+                onClick={openSharePopup}
+                className="profile-btn share-btn"
+              >
+                Share Profile
+              </button>
+            </div>
           </div>
+
+          {showPopup && (
+            <div className="popup-overlay">
+              <div className="popup-container">
+                <button
+                  onClick={() => setShowPopup(false)}
+                  className="popup-close"
+                >
+                  &times;
+                </button>
+                <h2 className="popup-title">Share Your Profile</h2>
+                <div className="popup-content">
+                  <input
+                    type="text"
+                    value={window.location.href}
+                    readOnly
+                    className="popup-input"
+                  />
+                  <button onClick={handleCopy} className="popup-copy-btn">
+                    {copied ? "Copied!" : "Copy Link"}
+                  </button>
+                </div>
+              </div>
+            </div>
+          )}
         </div>
-      )}
+
+        <div className="posts-section">
+          {user.posts.length > 0 ? (
+            <div className="posts-grid">
+              {user.posts.map((post) => (
+                <div key={post.id} className="post-item" onClick={() => openPost(post.id)}>
+                  
+                  <img
+                    src={post.image}
+                    alt={post.description}
+                    className="post-image"
+                  />
+                  <div className="post-overlay">
+                    <p className="post-description">{post.description}</p>
+                  </div>
+                </div>
+              ))}
+            </div>
+          ) : (
+            <p className="no-posts">No posts available.</p>
+          )}
+        </div>
+      </div>
     </>
   );
 }

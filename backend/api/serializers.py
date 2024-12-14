@@ -1,4 +1,4 @@
-from .models import CustomUser, Posts
+from .models import CustomUser, Posts, Comments, CommentLikes
 from rest_framework import serializers
 
 class UserSerializer(serializers.ModelSerializer):
@@ -14,5 +14,30 @@ class UserSerializer(serializers.ModelSerializer):
 class PostsSerializer(serializers.ModelSerializer):
     class Meta:
         model = Posts
+        fields = '__all__'
+        read_only_fields = ('time_created',)
+        
+class CommentsSerializer(serializers.ModelSerializer):
+    user_id = UserSerializer(read_only=True)
+    likes = serializers.SerializerMethodField()
+    liked = serializers.SerializerMethodField()
+    
+    class Meta:
+        model = Comments
+        fields = '__all__'
+        read_only_fields = ('time_created',)
+        
+    def get_likes(self, obj):
+        return CommentLikes.objects.filter(comment_id=obj.id).count()
+    
+    def get_liked(self, obj):
+        request = self.context.get('request')
+        if not request or not request.user or not request.user.is_authenticated:
+            return False
+        return CommentLikes.objects.filter(comment_id=obj.id, user_id=request.user.id).exists()
+        
+class CommentSaveSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Comments
         fields = '__all__'
         read_only_fields = ('time_created',)

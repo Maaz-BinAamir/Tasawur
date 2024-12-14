@@ -17,7 +17,7 @@ function App() {
         <Route path="/homeposts" element={<HomePosts />} />
         <Route path="/post/:postID" element={<Post />} />
         <Route path="/create_post" element={<CreatePost />} />
-        <Route path="/profile/:userID" element={<Profile />} />
+        <Route path="/profile/:id" element={<Profile />} />
         <Route path="/profile" element={<Profile />} />
         <Route path="/edit_profile" element={<EditProfile />} />
         <Route path="/chat" element={<ChatApp />} />

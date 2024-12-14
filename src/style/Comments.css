@@ -1,0 +1,140 @@
+/* Comments Section */
+.comments-section {
+  border-top: 1px solid #efefef;
+  padding-top: 15px;
+}
+
+.comments-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 15px;
+  color: #8e8e8e;
+  padding: 0 15px;
+}
+
+/* Make Comment Form */
+.make-comment-form {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 0 15px 15px;
+}
+
+.comment-input {
+  flex-grow: 1;
+  padding: 10px;
+  border: 1px solid #dbdbdb;
+  border-radius: 20px;
+  font-size: 0.9rem;
+  background-color: #fafafa;
+}
+
+.comment-submit-btn {
+  background: none;
+  border: none;
+  color: #007bff;
+  font-weight: 600;
+  cursor: pointer;
+  transition: color 0.2s ease;
+}
+
+.comment-submit-btn:hover {
+  color: #0056b3;
+}
+
+/* Individual Comment */
+.single-comment {
+  padding: 12px 15px;
+  border-top: 1px solid #efefef;
+}
+
+.comment-user-info {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+}
+
+.comment-user-pfp {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid #f0f0f0;
+  cursor: pointer;
+}
+
+.comment-content-wrapper {
+  flex-grow: 1;
+}
+
+.comment-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 5px;
+}
+
+.comment-username {
+  font-size: 0.9rem;
+  color: #262626;
+}
+
+.comment-timestamp {
+  color: #8e8e8e;
+  font-size: 0.75rem;
+}
+
+.comment-text {
+  font-size: 0.9rem;
+  color: #262626;
+  margin-bottom: 8px;
+  line-height: 1.4;
+}
+
+.comment-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.comment-like-button {
+  background: none;
+  border: none;
+  color: #8e8e8e;
+  font-size: 0.8rem;
+  cursor: pointer;
+  transition: color 0.2s ease;
+}
+
+.comment-like-button.liked {
+  color: #007bff;
+  font-weight: 600;
+}
+
+.comment-likes-count {
+  font-size: 0.8rem;
+  color: #8e8e8e;
+}
+
+.no-comments {
+  text-align: center;
+  color: #8e8e8e;
+  padding: 15px;
+  font-size: 0.9rem;
+}
+
+/* Responsive Design */
+@media (max-width: 600px) {
+  .comments-section {
+    border-top: none;
+  }
+
+  .single-comment {
+    padding: 12px 0;
+  }
+
+  .make-comment-form {
+    padding: 0;
+  }
+}

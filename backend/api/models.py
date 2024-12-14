@@ -12,7 +12,6 @@ class CustomUser(AbstractUser):
 class Posts(models.Model):
     image = models.URLField(max_length=1024)
     description = models.TextField()
-    likes = models.IntegerField(default=0)
     time_created = models.DateTimeField(auto_now_add=True)
     user_id = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name='posts')
 
@@ -33,3 +32,18 @@ class Message(models.Model):
 
     def __str__(self):
         return f"Message from {self.sender} to {self.receiver} at {self.timestamp}"
+    
+class Comments(models.Model):
+    post_id = models.ForeignKey(Posts, on_delete=models.CASCADE, related_name='comments')
+    user_id = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name='comments')
+    content = models.TextField()
+    time_created = models.DateTimeField(auto_now_add=True)
+
+class PostLikes(models.Model):
+    post_id = models.ForeignKey(Posts, on_delete=models.CASCADE, related_name='post_likes')
+    user_id = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name='liked_posts')
+    
+class CommentLikes(models.Model):
+    comment_id = models.ForeignKey(Comments, on_delete=models.CASCADE, related_name='comment_likes')
+    user_id = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name='liked_comments')
+    

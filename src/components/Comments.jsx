@@ -1,144 +1,153 @@
-import "../App.css";
-import { useState, useEffect } from "react";
+import "../style/Comments.css";
+import { useState, useEffect, useCallback } from "react";
+import { useNavigate } from "react-router-dom";
+import axios from "axios";
 
-function OneComment({
-  id,
-  username,
-  content,
-  likes,
-  createdAt,
-  onLike,
-  hasLiked,
-  profilePic,
-}) {
+const apiUrl = "http://localhost:8000/api";
+
+function OneComment({ comment, onLike }) {
+  const { id, user_id, content, likes, time_created, liked } = comment;
   const [currentLikes, setCurrentLikes] = useState(likes);
+  const [hasLiked, setHasLiked] = useState(liked);
 
-  const handleLike = () => {
-    if (!hasLiked) {
-      setCurrentLikes(currentLikes + 1);
-      onLike(id);
+  const navigate = useNavigate();
+
+  const handleLike = async () => {
+    setHasLiked(!hasLiked);
+    setCurrentLikes((prev) => (hasLiked ? prev - 1 : prev + 1));
+
+    try {
+      const authToken = JSON.parse(localStorage.getItem("authToken")) || {};
+      await axios.post(
+        `${apiUrl}/comments/${id}/like/`,
+        {},
+        {
+          headers: {
+            Authorization: `Bearer ${authToken.access}`,
+          },
+        }
+      );
+    } catch (error) {
+      console.error("Error liking comment:", error);
+      setHasLiked((prev) => !prev);
+      setCurrentLikes((prev) => (hasLiked ? prev + 1 : prev - 1));
     }
   };
 
+  const openProfile = () => {
+    navigate(`/profile/${user_id.id}`);
+  };
+
   return (
-    <div className="comment">
-      <div>
-        <img src={profilePic} className="pfp" />
-        <strong>{username}</strong>
+    <div className="single-comment">
+      <div className="comment-user-info">
+        <img
+          src={user_id.profile_picture}
+          alt={user_id.username}
+          className="comment-user-pfp"
+          onClick={openProfile}
+        />
+        <div className="comment-content-wrapper">
+          <div className="comment-header">
+            <strong className="comment-username">{user_id.username}</strong>
+            <span className="comment-timestamp">
+              {new Date(time_created).toLocaleString()}
+            </span>
+          </div>
+          <p className="comment-text">{content}</p>
+          <div className="comment-actions">
+            <button
+              onClick={handleLike}
+              className={`comment-like-button ${hasLiked ? "liked" : ""}`}
+            >
+              {hasLiked ? "Unlike" : "Like"}
+            </button>
+            <span className="comment-likes-count">{currentLikes} likes</span>
+          </div>
+        </div>
       </div>
-      <div>{content}</div>
-      <div>
-        <button onClick={handleLike} disabled={hasLiked}>
-          {hasLiked ? "Liked" : "Like"}
-        </button>{" "}
-        {currentLikes} likes
-      </div>
-      <div>
-        <small>{new Date(createdAt).toLocaleString()}</small>
-      </div>
-      <hr />
     </div>
   );
 }
 
-function MakeComment({ onAddComment }) {
+function MakeComment({ onAddComment, postID }) {
   const [text, setText] = useState("");
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     if (!text.trim()) return;
-    onAddComment(text);
-    setText("");
+
+    try {
+      const authToken = JSON.parse(localStorage.getItem("authToken")) || {};
+      const response = await axios.post(
+        `${apiUrl}/posts/${postID}/create_comment/`,
+        { content: text },
+        {
+          headers: {
+            Authorization: `Bearer ${authToken.access}`,
+          },
+        }
+      );
+      onAddComment(response.data);
+      setText("");
+    } catch (error) {
+      console.error("Error creating comment:", error);
+    }
   };
 
   return (
-    <form onSubmit={handleSubmit} className="make-comment">
-      <textarea
+    <form className="make-comment-form" onSubmit={handleSubmit}>
+      <input
+        type="text"
         value={text}
         onChange={(e) => setText(e.target.value)}
-        placeholder="Write a comment..."
+        placeholder="Add a comment..."
+        className="comment-input"
       />
-      <button type="submit">Add Comment</button>
+      <button type="submit" className="comment-submit-btn">
+        Post
+      </button>
     </form>
   );
 }
 
 function Comments({ postID }) {
-  const getComments = async () => {
-    return [
-      {
-        id: "1",
-        body: "I like this drawing",
-        username: "Ayesha",
-        userId: "1",
-        likes: 4,
-        createdAt: "2023-08-16T23:00:33.010+02:00",
-        profilePic:
-          "https://i.pinimg.com/enabled/236x/49/34/44/493444050c86439c4cd995e5c079bb72.jpg",
-      },
-      {
-        id: "2",
-        body: "Beautiful art",
-        username: "Imran",
-        userId: "2",
-        likes: 5,
-        createdAt: "2023-08-16T23:00:33.010+02:00",
-        profilePic:
-          "https://i.pinimg.com/enabled/236x/49/34/44/493444050c86439c4cd995e5c079bb72.jpg",
-      },
-    ];
-  };
-
-  const createComment = async (text) => {
-    return {
-      id: Math.random().toString(36).substr(2, 9),
-      body: text,
-      userId: "1",
-      likes: 0,
-      username: "Shasha",
-      createdAt: new Date().toISOString(),
-    };
-  };
-
   const [comments, setComments] = useState([]);
-  const [likedComments, setLikedComments] = useState(() => {
-    return JSON.parse(localStorage.getItem("likedComments")) || [];
-  });
+
+  const fetchComments = useCallback(async () => {
+    try {
+      const authToken = JSON.parse(localStorage.getItem("authToken")) || {};
+      const response = await axios.get(`${apiUrl}/posts/${postID}/comments`, {
+        headers: {
+          Authorization: `Bearer ${authToken.access}`,
+        },
+      });
+      setComments(response.data);
+      console.log(response.data);
+    } catch (error) {
+      console.error("Error fetching comments:", error);
+    }
+  }, [postID]);
 
   useEffect(() => {
-    getComments().then((data) => setComments(data));
-  }, []);
+    fetchComments();
+  }, [fetchComments]);
 
-  const addComment = (text) => {
-    createComment(text).then((newComment) => {
-      setComments([newComment, ...comments]);
-    });
-  };
-
-  const handleLike = (id) => {
-    const updatedLikedComments = [...likedComments, id];
-    setLikedComments(updatedLikedComments);
-    localStorage.setItem("likedComments", JSON.stringify(updatedLikedComments));
+  const addComment = (newComment) => {
+    setComments((prevComments) => [newComment, ...prevComments]);
   };
 
   return (
-    <div>
-      <h2>Comments</h2>
-      <MakeComment onAddComment={addComment} />
+    <div className="comments-section">
+      <MakeComment onAddComment={addComment} postID={postID} />
       {comments.length === 0 ? (
-        <p>No comments yet.</p>
+        <p className="no-comments">No comments yet</p>
       ) : (
         comments.map((comment) => (
           <OneComment
             key={comment.id}
-            id={comment.id}
-            username={comment.username}
-            content={comment.body}
-            likes={comment.likes}
-            createdAt={comment.createdAt}
-            onLike={handleLike}
-            hasLiked={likedComments.includes(comment.id)}
-            profilePic={comment.profilePic}
+            comment={comment}
+            onLike={() => fetchComments()}
           />
         ))
       )}

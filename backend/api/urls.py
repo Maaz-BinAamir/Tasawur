@@ -1,5 +1,5 @@
 from django.urls import path
-from .views import create_user, google_login, login_user, user_profile, create_posts, update_posts, delete_post, post_details, home_posts, other_user_profile, update_user
+from .views import create_user, google_login, login_user, user_profile, create_posts, update_posts, delete_post, post_details, home_posts, other_user_profile, update_user, create_comment, get_comments, like_comment, like_post
 from rest_framework_simplejwt.views import (
     TokenObtainPairView,
     TokenRefreshView,
@@ -19,4 +19,8 @@ urlpatterns = [
     path('posts/create/', create_posts, name='create_posts'),
     path('posts/update/<int:post_id>/', update_posts, name='update_posts'),
     path('posts/delete/<int:post_id>/', delete_post, name='delete_post'),
+    path('posts/<int:post_id>/create_comment/', create_comment, name='create_comment'),
+    path('posts/<int:post_id>/comments/', get_comments, name='comments'),
+    path('posts/<int:post_id>/like/', like_post, name='like_posts'),
+    path('comments/<int:comment_id>/like/', like_comment, name='like_comments'),
 ]

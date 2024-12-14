@@ -1,7 +1,7 @@
 from supabase import create_client, Client
-from api.models import CustomUser, Posts
+from api.models import CustomUser, Posts, Comments, PostLikes, CommentLikes
 from django.db import models
-from .serializers import PostsSerializer, UserSerializer
+from .serializers import PostsSerializer, UserSerializer, CommentsSerializer, CommentSaveSerializer
 from django.contrib.auth import authenticate
 from google.oauth2 import id_token
 from google.auth.transport import requests
@@ -89,6 +89,10 @@ def google_login(request):
 @permission_classes([IsAuthenticated])
 def user_profile(request):
     user = request.user
+    posts = Posts.objects.filter(user_id=user.id)
+    
+    serialized_posts = PostsSerializer(posts, many=True)
+    
     return Response({
         'id': user.id,
         'email': user.email,
@@ -97,12 +101,17 @@ def user_profile(request):
         'first_name': user.first_name,
         'last_name': user.last_name,
         'bio': user.bio,
+        'posts': serialized_posts.data,
     }, status=status.HTTP_200_OK)
         
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
 def other_user_profile(request, user_id):
     user = CustomUser.objects.get(id=user_id)
+    posts = Posts.objects.filter(user_id=user_id)
+    
+    serialized_posts = PostsSerializer(posts, many=True)
+    
     return Response({
         'id': user.id,
         'email': user.email,
@@ -111,6 +120,7 @@ def other_user_profile(request, user_id):
         'first_name': user.first_name,
         'last_name': user.last_name,
         'bio': user.bio,
+        'posts': serialized_posts.data,
     }, status=status.HTTP_200_OK)
 
 @api_view(['PUT'])
@@ -140,7 +150,6 @@ def update_user(request):
             # Get the public URL of the uploaded image
             image_url = supabase.storage.from_('profiles').get_public_url(filename)
             user.profile_picture = image_url
-            print("user's pic", user.profile_picture)
         except Exception as e:
             print('error', f"Image upload failed: {str(e)}")
             return Response({'error': f"Image upload failed: {str(e)}"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
@@ -173,7 +182,6 @@ def create_posts(request):
 
     # Generate a unique filename
     filename = f"{max_id + 1}_{image.name}"
-    print('filename', filename)
     
     try:
         # Upload the image to Supabase storage
@@ -185,7 +193,6 @@ def create_posts(request):
         
         # Get the public URL of the uploaded image
         image_url = supabase.storage.from_('posts').get_public_url(filename)
-        print("image_url", image_url)
         
         # Prepare post data
         data = {
@@ -195,7 +202,6 @@ def create_posts(request):
             "user_id": request.user.id
             }
         
-        print("data", data)
         # Serialize and save the post
         serializer = PostsSerializer(data=data)
         if serializer.is_valid():
@@ -237,17 +243,24 @@ def delete_post(request, post_id):
 @api_view(['GET'])
 @permission_classes([AllowAny])
 def post_details(request, post_id):
+    hasLiked = PostLikes.objects.filter(post_id=post_id, user_id=request.user.id).exists()
+    likes = PostLikes.objects.filter(post_id=post_id).count()
     post = Posts.objects.get(id=post_id)
     user = post.user_id
+    comments = Comments.objects.filter(post_id=post_id)
+    
+    serialized_user = UserSerializer(user)
+    serialized_comments = CommentsSerializer(comments, many=True)
     return Response({
         'id': post.id,
-        'author': user.username,
+        'author': serialized_user.data,
         'profile_pic': user.profile_picture,
         'url': post.image,
         'description': post.description,
-        'likes': post.likes,
+        'likes': likes,
+        'hasLiked': hasLiked,
         'time_created': post.time_created,
-        
+        'comments': serialized_comments.data,
     }, status=status.HTTP_200_OK)
 
 @api_view(['GET'])
@@ -255,6 +268,49 @@ def post_details(request, post_id):
 def home_posts(request):
     # Fetch all posts (you can add filters if needed)
     posts = Posts.objects.all().order_by('-time_created')
-    # Serialize all posts
+
     serializer = PostsSerializer(posts, many=True)
     return Response(serializer.data)
+
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+def create_comment(request, post_id):
+    data = {
+        "post_id": post_id,
+        "user_id": request.user.id,
+        "content": request.data.get("content"),
+    }
+    
+    serializer = CommentSaveSerializer(data=data)
+    if serializer.is_valid():
+        serializer.save()
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
+    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def get_comments(request, post_id):
+    comments = Comments.objects.filter(post_id=post_id)
+    comments_serializer = CommentsSerializer(comments, many=True, context={'request': request})
+    return Response(comments_serializer.data)
+
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+def like_post(request, post_id):
+    post = Posts.objects.get(id=post_id)
+    user = CustomUser.objects.get(id=request.user.id)
+    if (PostLikes.objects.filter(post_id=post, user_id=user).exists()):
+        PostLikes.objects.filter(post_id=post, user_id=user).delete()
+        return Response({'message': 'Post unliked successfully.'}, status=status.HTTP_204_NO_CONTENT)
+    PostLikes.objects.create(post_id=post, user_id=request.user)
+    return Response({'message': 'Post liked successfully.'}, status=status.HTTP_201_CREATED)
+    
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+def like_comment(request, comment_id):
+    comment = Comments.objects.get(id=comment_id)
+    user = CustomUser.objects.get(id=request.user.id)
+    if (CommentLikes.objects.filter(comment_id=comment, user_id=user).exists()):
+        CommentLikes.objects.filter(comment_id=comment, user_id=user).delete()
+    CommentLikes.objects.create(comment_id=comment, user_id=user)
+    return Response({'message': 'Comment liked successfully.'}, status=status.HTTP_201_CREATED)

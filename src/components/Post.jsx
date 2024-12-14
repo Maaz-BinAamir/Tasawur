@@ -2,8 +2,10 @@ import "../App.css";
 import NavBar from "./NavBar.jsx";
 import axios from "axios";
 import Comments from "./Comments.jsx";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
+import "../style/Posts.css";
+import { Heart, MessageCircle } from "lucide-react";
 
 function Post() {
   const { postID } = useParams();
@@ -12,10 +14,11 @@ function Post() {
   const [currentLikes, setCurrentLikes] = useState(0);
   const [hasLiked, setHasLiked] = useState(false);
   const [loading, setLoading] = useState(true);
-  const [showComments, setShowComments] = useState(false);
+  const [showPopup, setShowPopup] = useState(false);
+  const [copied, setCopied] = useState(false);
 
+  const navigate = useNavigate();
 
-  // Fetch post data when the component mounts
   useEffect(() => {
     const fetchPost = async () => {
       try {
@@ -33,6 +36,8 @@ function Post() {
         console.log(response.data);
         setPost(response.data);
         setCurrentLikes(response.data.likes);
+        setHasLiked(response.data.hasLiked);
+        // console.log(typeof response.data.hasLiked);
         setLoading(false);
       } catch (error) {
         console.error("Error fetching post:", error);
@@ -43,88 +48,134 @@ function Post() {
     fetchPost();
   }, [postID]);
 
-  // const updateLikes = async (postId, newLikes) => {
-  //   const authToken = JSON.parse(localStorage.getItem("authToken"));
-
-  //   try {
-  //     const response = await axios.put(
-  //       `http://127.0.0.1:8000/api/posts/update/${postId}/`,
-  //       { likes: newLikes },
-  //       {
-  //         headers: {
-  //           Authorization: `Bearer ${authToken.access}`,
-  //           "Content-Type": "application/json",
-  //         },
-  //       }
-  //     );
-
-  //     console.log("Post updated successfully:", response.data);
-  //     return response.data;
-  //   } catch (error) {
-  //     console.error(
-  //       "Error updating likes:",
-  //       error.response?.data || error.message
-  //     );
-  //     throw error;
-  //   }
-  // };
-
-  const handleLike = () => {
-    // setPost((post) =>
-    // updateLikes(post.id, hasLiked ? post.likes + 1 : post.likes - 1)
-    // );
+  const handleLike = async () => {
     setHasLiked((liked) => !liked);
+    setCurrentLikes(hasLiked ? currentLikes - 1 : currentLikes + 1);
+
+    try {
+      const authToken = JSON.parse(localStorage.getItem("authToken")) || {};
+
+      await axios.post(
+        `http://127.0.0.1:8000/api/posts/${postID}/like/`,
+        {},
+        {
+          headers: {
+            Authorization: `Bearer ${authToken.access}`,
+          },
+        }
+      );
+    } catch (err) {
+      console.error("Error liking post:", err);
+    }
   };
 
-  const toggleComments = () => {
-    setShowComments((prevShowComments) => !prevShowComments);
+  const openSharePopup = () => {
+    setShowPopup(true);
+    setCopied(false);
   };
 
+  const handleCopy = () => {
+    navigator.clipboard
+      .writeText(`${window.location.origin}/post/${postID}`)
+      .then(() => {
+        setCopied(true);
+      });
+  };
+
+  const openProfile = (id) => {
+    navigate(`/profile/${id}`);
+  };
+
+  if (loading) return <div className="loading-container">Loading...</div>;
 
   return (
     <>
       <NavBar />
-      {post ? (
-        <>
-          <div>
-            <div>
-              <img src={post.profile_pic} className="pfp" />
-              <strong>{post.author}</strong>
-            </div>
-            <div>
-              {loading ? (
-                <h1>Loading ...</h1>
-              ) : (
+      {post && (
+        <div className="post-detail-container">
+          <div className="post-detail-wrapper">
+            <div className="post-header">
+              <div
+                className="post-author-info"
+                onClick={() => openProfile(post.author.id)}
+              >
                 <img
-                  src={post.url}
-                  alt={`Post ${postID}`}
-                  style={{ width: "30%", height: "auto" }}
+                  src={post.author.profile_picture}
+                  alt={post.author.username}
+                  className="post-author-pfp"
                 />
-              )}
+                <strong className="post-author-name">
+                  {post.author.username}
+                </strong>
+              </div>
+              <span className="post-timestamp">{post.createdAt}</span>
             </div>
-            <div>
-              <div>
-                <button onClick={handleLike}>
-                  {hasLiked ? "Liked" : "Like"}
+
+            <div className="post-image-container">
+              <img
+                src={post.url}
+                alt={`Post ${postID}`}
+                className="post-image"
+              />
+            </div>
+
+            <div className="post-interactions">
+              <div className="interaction-buttons">
+                <button
+                  onClick={handleLike}
+                  className={`like-button ${hasLiked ? "liked" : ""}`}
+                >
+                  <Heart
+                    fill={hasLiked ? "red" : "none"}
+                    color={hasLiked ? "red" : "black"}
+                    strokeWidth={hasLiked ? 0 : 2}
+                  />
                 </button>
-                <span> {currentLikes}</span>
-              </div>
-              <div>
-                <p>{post.description}</p>
-              </div>
-              <h2>{post.createdAt}</h2>
-              <div>
-                <span>Comments</span>
-                <button onClick={toggleComments}>
-                  {showComments ? "^" : "ᵛ"}
+                <span className="likes-count">{currentLikes} likes</span>
+
+                <button onClick={openSharePopup} className="share-button">
+                  Share
                 </button>
               </div>
-              {showComments && <Comments postID={postID} />}
+
+              <div className="post-description-text">{post.description}</div>
+
+              {showPopup && (
+                <div className="popup-overlay">
+                  <div className="popup-container">
+                    <button
+                      onClick={() => setShowPopup(false)}
+                      className="popup-close"
+                    >
+                      &times;
+                    </button>
+                    <h2 className="popup-title">Share This Post</h2>
+                    <div className="popup-content">
+                      <input
+                        type="text"
+                        value={`${window.location.origin}/post/${postID}`}
+                        readOnly
+                        className="popup-input"
+                      />
+                      <button onClick={handleCopy} className="popup-copy-btn">
+                        {copied ? "Copied!" : "Copy Link"}
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              <div className="comments-section">
+                <div className="comments-header">
+                  <MessageCircle size={20} />
+                  <span>Comments</span>
+                </div>
+
+                <Comments postID={postID} />
+              </div>
             </div>
           </div>
-        </>
-      ) : (
-        "Loading the Post"
+        </div>
       )}
     </>
   );

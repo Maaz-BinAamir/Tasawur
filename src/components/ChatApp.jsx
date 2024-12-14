@@ -99,72 +99,73 @@ const ChatApp = () => {
   };
 
   return (
-    <div className="chat-app">
-      <div className="sidebar">
-        <h3>Users</h3>
-        <ul>
-          {users.map((user) => (
-            <li
-              key={user.id}
-              className={selectedUser?.id === user.id ? "selected" : ""}
-              onClick={() => {
-                setSelectedUser(user);
-                setMessages([]);
-              }}
-            >
-              <img
-                src={
-                  user.profile_pic || `https://i.pravatar.cc/48?u=${user.id}`
-                }
-                alt={user.username}
-                className="user-avatar"
-              />
-              <span>{user.username}</span>
-            </li>
-          ))}
-        </ul>
-      </div>
-
-      <div className="chat-area">
-        {selectedUser ? (
-          <>
-            <h3>Chat with {selectedUser.username}</h3>
-            <div
-              className="messages"
-              style={{
-                overflowY: "auto",
-                maxHeight: "300px",
-                display: "flex",
-                flexDirection: "column",
-              }}
-            >
-              {messages.map((message) => (
-                <div
-                  key={message.id}
-                  className={
-                    message.sender_id === currentUserId ? "sent" : "received"
+    <div className="chat-app-wrapper">
+      <div className="chat-app">
+        <div className="sidebar">
+          <h3>Users</h3>
+          <ul>
+            {users.map((user) => (
+              <li
+                key={user.id}
+                className={selectedUser?.id === user.id ? "selected" : ""}
+                onClick={() => {
+                  setSelectedUser(user);
+                  setMessages([]);
+                }}
+              >
+                <img
+                  src={
+                    user.profile_pic || `https://i.pravatar.cc/48?u=${user.id}`
                   }
-                >
-                  {message.content}
-                </div>
-              ))}
-              {/* Invisible div to enable scrolling to bottom */}
-              <div ref={messagesEndRef} />
-            </div>
-            <div className="message-input">
-              <input
-                type="text"
-                value={newMessage}
-                onChange={(e) => setNewMessage(e.target.value)}
-                placeholder="Type your message"
-                onKeyDown={(e) => e.key === "Enter" && sendMessage()}
-              />
-              <button onClick={sendMessage}>Send</button>
-            </div>
-          </>
-        ) : (
-          <p>Select a user to chat with</p>
-        )}
+                  alt={user.username}
+                  className="user-avatar"
+                />
+                <span>{user.username}</span>
+              </li>
+            ))}
+          </ul>
+        </div>
+
+        <div className="chat-area">
+          {selectedUser ? (
+            <>
+              <h3>Chat with {selectedUser.username}</h3>
+              <div
+                className="messages"
+                style={{
+                  overflowY: "auto",
+                  maxHeight: "300px",
+                  display: "flex",
+                  flexDirection: "column",
+                }}
+              >
+                {messages.map((message) => (
+                  <div
+                    key={message.id}
+                    className={
+                      message.sender_id === currentUserId ? "sent" : "received"
+                    }
+                  >
+                    {message.content}
+                  </div>
+                ))}
+                <div ref={messagesEndRef} />
+              </div>
+              <div className="message-input">
+                <input
+                  type="text"
+                  value={newMessage}
+                  onChange={(e) => setNewMessage(e.target.value)}
+                  placeholder="Type your message"
+                  onKeyDown={(e) => e.key === "Enter" && sendMessage()}
+                />
+                <button onClick={sendMessage}>Send</button>
+              </div>
+            </>
+          ) : (
+            <p>Select a user to chat with</p>
+          )}
+        </div>
       </div>
     </div>
   );
