@@ -6,6 +6,7 @@ import Post from "./components/Post";
 import Profile from "./components/Profile";
 import EditProfile from "./components/EditProfile";
 import CreatePost from "./components/CreatePost";
+import ChatApp from "./components/ChatApp";
 
 function App() {
   return (
@@ -19,6 +20,7 @@ function App() {
         <Route path="/profile/:userID" element={<Profile />} />
         <Route path="/profile" element={<Profile />} />
         <Route path="/edit_profile" element={<EditProfile />} />
+        <Route path="/chat" element={<ChatApp />} />
       </Routes>
     </Router>
   );

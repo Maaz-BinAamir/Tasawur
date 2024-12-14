@@ -4,13 +4,16 @@ import { useNavigate } from "react-router-dom";
 
 function NavBar() {
   const navigate = useNavigate();
-
   const openProfile = () => {
     navigate(`/profile`);
   };
 
   const openHome = () => {
     navigate(`/homeposts`);
+  };
+
+  const openChatApp = () => {
+    navigate(`/chat`);
   };
 
   return (
@@ -31,7 +34,7 @@ function NavBar() {
           <a href="#" className="icon" onClick={openHome}>
             <i className="fas fa-home"></i>
           </a>
-          <a href="#" className="icon">
+          <a href="#" className="icon" onClick={openChatApp}>
             <i className="fas fa-comment-dots"></i>
           </a>
           <a href="#" className="icon" onClick={openProfile}>

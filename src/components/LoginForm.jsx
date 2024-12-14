@@ -49,6 +49,8 @@ function LoginForm() {
       console.log("User Profile:", profileResponse.data);
       setResponseMessage(`${profileResponse.data.username}`);
 
+      localStorage.setItem("userID", profileResponse.data.id);
+
       if (profileResponse.data.bio === null) {
         navigate("/edit_profile?signup=True");
       } else {

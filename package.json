@@ -12,6 +12,7 @@
   "dependencies": {
     "@fortawesome/fontawesome-free": "^6.7.1",
     "@react-oauth/google": "^0.12.1",
+    "@supabase/supabase-js": "^2.47.7",
     "@types/react-router-dom": "^5.3.3",
     "axios": "^1.7.8",
     "react": "^18.3.1",
