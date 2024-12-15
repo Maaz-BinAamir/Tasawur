@@ -17,7 +17,7 @@ const EditProfile = () => {
   });
   const [image, setImage] = useState(null);
   const [errors, setErrors] = useState({});
-  const [imageUrl, setImageUrl] = useState(null);
+  const [previewUrl, setPreviewUrl] = useState(null);
 
   const navigate = useNavigate();
   const location = useLocation();
@@ -37,7 +37,7 @@ const EditProfile = () => {
           last_name: response.data.last_name || "",
           bio: response.data.bio || "",
         });
-        setImageUrl(response.data.profile_pic);
+        setPreviewUrl(response.data.profile_pic);
       } catch (error) {
         console.error("Error fetching profile:", error);
       }
@@ -161,13 +161,13 @@ const EditProfile = () => {
               name="profile_picture"
               onChange={(e) => {
                 setImage(e.target.files[0]);
-                setImageUrl(URL.createObjectURL(e.target.files[0])); // Preview image
+                setPreviewUrl(URL.createObjectURL(e.target.files[0])); // Preview image
               }}
             />
-            {imageUrl && (
+            {previewUrl && (
               <img
                 className="profile-img-preview"
-                src={imageUrl}
+                src={previewUrl}
                 alt="Profile preview"
               />
             )}

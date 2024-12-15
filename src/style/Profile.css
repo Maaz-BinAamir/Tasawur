@@ -82,7 +82,7 @@
 
 .edit-btn:hover {
   background-color: #faa6bf;
-  color:#fff;
+  color: #fff;
 }
 
 .share-btn {
@@ -94,7 +94,7 @@
 
 .share-btn:hover {
   background-color: #faa6bf;
-  color:#ffff;
+  color: #ffff;
 }
 
 /* Share Popup */
@@ -184,7 +184,7 @@
   cursor: pointer;
 }
 
-.post-image {
+.post-image-profile {
   position: absolute;
   top: 0;
   left: 0;
@@ -194,7 +194,7 @@
   transition: transform 0.3s ease;
 }
 
-.post-item:hover .post-image {
+.post-item:hover .post-image-profile {
   transform: scale(1.05);
 }
 

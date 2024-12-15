@@ -130,12 +130,15 @@ function Profile() {
           {user.posts.length > 0 ? (
             <div className="posts-grid">
               {user.posts.map((post) => (
-                <div key={post.id} className="post-item" onClick={() => openPost(post.id)}>
-                  
+                <div
+                  key={post.id}
+                  className="post-item"
+                  onClick={() => openPost(post.id)}
+                >
                   <img
                     src={post.image}
                     alt={post.description}
-                    className="post-image"
+                    className="post-image-profile"
                   />
                   <div className="post-overlay">
                     <p className="post-description">{post.description}</p>
