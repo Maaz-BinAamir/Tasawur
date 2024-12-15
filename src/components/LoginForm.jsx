@@ -110,7 +110,7 @@ function LoginForm() {
 
         <div className="Logsignup_link">
           Don&apos;t have an account?{" "}
-          <a href="#" onClick={() => navigate("/SignUpForm")}>
+          <a href="#" onClick={() => navigate("/signup")}>
             Sign Up
           </a>
         </div>

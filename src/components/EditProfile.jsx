@@ -178,7 +178,7 @@ const EditProfile = () => {
       </div>
 
       {/* Right panel */}
-      <div className="userpanel info-panel">
+      <div className="userpanel userinfo-panel">
         <div className="userLogbox-container">
           <div className="userLogbox"></div>
           <div className="userLogbox">

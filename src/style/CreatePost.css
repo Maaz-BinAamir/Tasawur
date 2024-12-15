@@ -1,0 +1,135 @@
+body {
+  font-family: Arial, sans-serif;
+  background-color: #f9f9f9;
+  margin: 0;
+  padding: 0;
+}
+
+.create-post-wrapper {
+  width: 90%;
+  max-width: 900px;
+  margin: 2rem auto;
+  padding: 1.5rem;
+  background-color: #fff;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.create-post-wrapper form {
+  width: 100%;
+  padding: 0;
+}
+
+.create-post-wrapper .image-container,
+.create-post-wrapper .description,
+.create-post-wrapper .categories,
+.create-post-wrapper .terms {
+  margin-bottom: 1.5rem;
+}
+
+.create-post-wrapper .image-label,
+.create-post-wrapper .description-label {
+  display: block;
+  font-weight: bold;
+  margin-bottom: 0.5rem;
+  color: #333;
+  font-size: 1.5rem;
+}
+
+.create-post-wrapper .categories > label {
+  font-size: 1.2rem;
+  font-weight: bold;
+  color: #000000;
+  margin-bottom: 1.5rem;
+}
+
+.create-post-wrapper .categories div {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  font-size: 1rem;
+  margin-bottom: 0.5rem;
+  margin-top: 0.5rem;
+}
+
+.create-post-wrapper .categories div > div {
+  display: flex;
+  align-items: center;
+  flex: 1 1 calc(25% - 1rem); 
+  min-width: 150px;
+}
+
+.create-post-wrapper .categories .category-label {
+  margin-left: 0.5rem;
+  font-weight: bold;
+  font-size: 1.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.create-post-wrapper input[type="file"],
+.create-post-wrapper textarea,
+.create-post-wrapper input[type="checkbox"] {
+  margin-top: 0.5rem;
+}
+
+.create-post-wrapper textarea {
+  width: 100%;
+  height: 80px;
+  padding: 0.5rem;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-size: 1rem;
+  resize: vertical;
+}
+
+.create-post-wrapper input[type="file"] {
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  padding: 0.5rem;
+  width: 100%;
+  font-size: 1rem;
+}
+
+.create-post-wrapper .terms {
+  font-size: 1.5rem;
+  font-weight: bold;
+  color: #000000;
+  margin-bottom: 1rem;
+  margin-top: 2rem;
+}
+
+.create-post-wrapper .term-statement {
+  display: flex;
+  align-items: center; 
+  gap: 0.5rem; 
+  color: #333;
+  font-size: 1rem;
+}
+
+.create-post-wrapper input[type="checkbox"] {
+  margin: 0;
+  align-self: center; 
+}
+
+.create-post-wrapper .create-button {
+  width: 100%;
+  padding: 0.75rem;
+  font-size: 1rem;
+  font-weight: bold;
+  color: #fff;
+  background-color: #dcbe9d;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  margin-top: 3rem;
+}
+
+.create-post-wrapper .create-button:disabled {
+  background-color: #cccccc;
+  cursor: not-allowed;
+}
+
+.create-post-wrapper .create-button:hover:not(:disabled) {
+  background-color: #a98967;
+}

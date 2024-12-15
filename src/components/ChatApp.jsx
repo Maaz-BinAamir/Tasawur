@@ -129,7 +129,7 @@ const ChatApp = () => {
         <div className="chat-area">
           {selectedUser ? (
             <>
-              <h3>Chat with {selectedUser.username}</h3>
+              <h3>{selectedUser.username}</h3>
               <div
                 className="messages"
                 style={{

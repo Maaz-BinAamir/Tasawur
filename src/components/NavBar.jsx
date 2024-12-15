@@ -4,6 +4,11 @@ import { useNavigate } from "react-router-dom";
 
 function NavBar() {
   const navigate = useNavigate();
+
+  const openCreatePost = () => {
+    navigate(`/create_post`);
+  };
+
   const openProfile = () => {
     navigate(`/profile`);
   };
@@ -31,6 +36,9 @@ function NavBar() {
 
         {/* Icons Section */}
         <div className="links">
+          <a href="#" className="icon" onClick={openCreatePost}>
+            <i className="fas fa-plus"></i>
+          </a>
           <a href="#" className="icon" onClick={openHome}>
             <i className="fas fa-home"></i>
           </a>

@@ -1,12 +1,18 @@
 import { useState, useCallback } from "react";
 import axios from "axios";
 import NavBar from "./NavBar";
+import "../style/CreatePost.css";
 
 export default function CreatePost() {
   const [image, setImage] = useState(null);
   const [description, setDescription] = useState("");
+  const [categories, setCategories] = useState([]);
+  const [agreeToTerms, setAgreeToTerms] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
+
+  const categoryOptions = ["Sketching", "Painting", "Digital Art", "Journaling", "Photography", "Doodling", "Sculpting", "Crocheting"];
+
 
   const handleSubmit = useCallback(
     async (e) => {
@@ -20,9 +26,23 @@ export default function CreatePost() {
         return;
       }
 
+      if (!categories.length) {
+        setError("Please select at least one category");
+        setIsLoading(false);
+        return;
+      }
+
+      if (!agreeToTerms) {
+        setError("You must agree to the terms before creating a post");
+        setIsLoading(false);
+        return;
+      }
+
       const formData = new FormData();
       formData.append("image", image);
       formData.append("description", description);
+      formData.append("categories", JSON.stringify(categories));
+
 
       const authToken = JSON.parse(localStorage.getItem("authToken"));
 
@@ -36,6 +56,9 @@ export default function CreatePost() {
 
         setImage(null);
         setDescription("");
+        setCategories([]);
+        setAgreeToTerms(false);
+
         alert("Post created successfully!");
       } catch (err) {
         setError(
@@ -46,15 +69,16 @@ export default function CreatePost() {
         setIsLoading(false);
       }
     },
-    [image, description]
+    [image, description, categories, agreeToTerms]
   );
 
   return (
     <>
       <NavBar />
-      <form onSubmit={handleSubmit}>
-        <div>
-          <label htmlFor="image">Image</label>
+      <div className="create-post-wrapper">
+      <form  onSubmit={handleSubmit}>
+        <div className="image-container">
+          <label className="image-label" htmlFor="image">Image</label>
           <input
             type="file"
             id="image"
@@ -62,20 +86,52 @@ export default function CreatePost() {
             onChange={(e) => setImage(e.target.files && e.target.files[0])}
           />
         </div>
-        <div>
-          <label htmlFor="description">Description</label>
-          <textarea
+        <div > 
+          <label className="description-label" htmlFor="description">Description</label>
+          <textarea className="description"
             id="description"
             value={description}
             onChange={(e) => setDescription(e.target.value)}
             placeholder="Enter your post description"
           />
         </div>
+        <div className="categories">
+          <label className="category-label">Categories</label>
+          <div className="categories">
+            {categoryOptions.map((category) => (
+              <div key={category}>
+                <input
+                  type="checkbox"
+                  id={category}
+                  value={category}
+                  checked={categories.includes(category)}
+                  onChange={() => handleCategoryChange(category)}
+                />
+                <label htmlFor={category}>{category}</label>
+              </div>
+            ))}
+          </div>
+        </div>
+        <div>
+          <h3 className="terms">Terms and conditions</h3>
+          <div className="term-statement">
+          <input
+            type="checkbox"
+            id="agreeToTerms"
+            checked={agreeToTerms}
+            onChange={(e) => setAgreeToTerms(e.target.checked)}
+          />
+          <label htmlFor="agreeToTerms">
+            I agree that my content does not have human portraits or scultpures and if any such content is found on my page, it will be removed without warning.
+          </label>
+          </div>
+        </div>
         {error && <p>{error}</p>}
-        <button type="submit" disabled={isLoading}>
+        <button className="create-button" type="submit" disabled={isLoading}>
           {isLoading ? "Creating..." : "Create Post"}
         </button>
       </form>
-    </>
-  );
+      </div>
+    </>
+  );
 }
