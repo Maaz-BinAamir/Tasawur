@@ -2,6 +2,7 @@
 .comments-section {
   border-top: 1px solid #efefef;
   padding-top: 15px;
+  
 }
 
 .comments-header {
@@ -33,14 +34,14 @@
 .comment-submit-btn {
   background: none;
   border: none;
-  color: #007bff;
+  color: #f07096;
   font-weight: 600;
   cursor: pointer;
   transition: color 0.2s ease;
 }
 
 .comment-submit-btn:hover {
-  color: #0056b3;
+  color: #ae6077;
 }
 
 /* Individual Comment */
@@ -108,7 +109,7 @@
 }
 
 .comment-like-button.liked {
-  color: #007bff;
+  color: #f07096;
   font-weight: 600;
 }
 

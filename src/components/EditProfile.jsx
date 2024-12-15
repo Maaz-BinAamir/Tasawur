@@ -16,9 +16,8 @@ const EditProfile = () => {
     bio: "",
   });
   const [image, setImage] = useState(null);
-  const [imageUrl, setImageUrl] = useState(null);
-  const [isExpanded, setIsExpanded] = useState(false);
   const [errors, setErrors] = useState({});
+  const [imageUrl, setImageUrl] = useState(null);
 
   const navigate = useNavigate();
   const location = useLocation();
@@ -38,7 +37,7 @@ const EditProfile = () => {
           last_name: response.data.last_name || "",
           bio: response.data.bio || "",
         });
-        setImage(response.data.profile_pic);
+        setImageUrl(response.data.profile_pic);
       } catch (error) {
         console.error("Error fetching profile:", error);
       }
@@ -107,93 +106,86 @@ const EditProfile = () => {
     }
   };
 
-  const toggleLogin = () => {
-    setIsExpanded(!isExpanded);
-  };
-
   return (
-    <div className="wrapper">
-      <div className={`login-text ${isExpanded ? "expand" : ""}`}>
-        <button className="cta" onClick={toggleLogin}>
-          <i
-            className={`fas fa-chevron-${isExpanded ? "up" : "down"} fa-1x`}
-          ></i>
-        </button>
-        <div className={`text ${isExpanded ? "show-hide" : ""}`}>
-          <form onSubmit={handleSubmit}>
-            <h2>User Details</h2>
-            <div className="profile-container">
-              <label>Profile Picture:</label>
-              {image ? (
-                <img
-                  src={imageUrl ? imageUrl : image}
-                  alt="Profile"
-                  className="profile-img"
-                />
-              ) : (
-                <p>No profile picture available</p>
-              )}
-              <input
-                type="file"
-                id="image"
-                accept="image/*"
-                onChange={(e) => {
-                  setImage(e.target.files && e.target.files[0]);
-                  setImageUrl(URL.createObjectURL(e.target.files[0]));
-                }}
-                className="profile-upload"
+    <div className="userLogIncontainer">
+      {/* Left panel with User form */}
+      <div className="userpanel login-panel">
+        <form onSubmit={handleSubmit}>
+          <h1>User Details</h1>
+
+          <div className="userLogtxt_field">
+            <input
+              type="text"
+              name="first_name"
+              value={formData.first_name}
+              onChange={handleChange}
+              required
+            />
+            {errors.first_name && (
+              <p className="error-text">{errors.first_name}</p>
+            )}
+            <label>First Name</label>
+            <span></span>
+          </div>
+          <div className="userLogtxt_field">
+            <input
+              type="text"
+              name="last_name"
+              value={formData.last_name}
+              onChange={handleChange}
+              required
+            />
+            {errors.last_name && (
+              <p className="error-text">{errors.last_name}</p>
+            )}
+            <label>Last Name</label>
+            <span></span>
+          </div>
+
+          <div className="userLogtxt_field">
+            <input
+              type="text"
+              name="bio"
+              value={formData.bio}
+              onChange={handleChange}
+              required
+            />
+            <label>Bio</label>
+            <span></span>
+          </div>
+
+          {/* Profile Picture Upload */}
+          <div className="profile_imgS">
+            <input
+              type="file"
+              name="profile_picture"
+              onChange={(e) => {
+                setImage(e.target.files[0]);
+                setImageUrl(URL.createObjectURL(e.target.files[0])); // Preview image
+              }}
+            />
+            {imageUrl && (
+              <img
+                className="profile-img-preview"
+                src={imageUrl}
+                alt="Profile preview"
               />
+            )}
+          </div>
 
-              <div className="input-group">
-                <input
-                  type="text"
-                  placeholder="First Name"
-                  name="first_name"
-                  value={formData.first_name}
-                  onChange={handleChange}
-                  className="input-field"
-                  style={{ color: "black" }}
-                />
-                {errors.first_name && (
-                  <p className="error-text">{errors.first_name}</p>
-                )}
-              </div>
-
-              <div className="input-group">
-                <input
-                  type="text"
-                  placeholder="Last Name"
-                  name="last_name"
-                  value={formData.last_name}
-                  onChange={handleChange}
-                  className="input-field"
-                  style={{ color: "black" }}
-                />
-                {errors.last_name && (
-                  <p className="error-text">{errors.last_name}</p>
-                )}
-              </div>
-
-              <div className="input-group">
-                <input
-                  type="text"
-                  name="bio"
-                  placeholder="Bio"
-                  style={{ color: "black" }}
-                  value={formData.bio}
-                  onChange={handleChange}
-                  className="input-field"
-                />
-              </div>
-            </div>
-          </form>
-        </div>
+          <button className="sub">Submit</button>
+        </form>
       </div>
-      <div className="call-text">
-        <h1>
-          Show us your <span>creative</span> side
-        </h1>
-        <button>Submit</button>
+
+      {/* Right panel */}
+      <div className="userpanel info-panel">
+        <div className="userLogbox-container">
+          <div className="userLogbox"></div>
+          <div className="userLogbox">
+            <span>User Details</span>
+          </div>
+          <div className="userLogbox"></div>
+        </div>
       </div>
     </div>
   );

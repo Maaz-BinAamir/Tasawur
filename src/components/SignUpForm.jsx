@@ -1,4 +1,5 @@
 import { useState } from "react";
+import "../style/SignUp.css";
 import { useNavigate } from "react-router-dom";
 import z from "zod";
 
@@ -17,6 +18,7 @@ function SignUpForm() {
 
   const [errors, setErrors] = useState({});
   const navigate = useNavigate();
+  const [isExpanded, setIsExpanded] = useState(false);
 
   function handleChange(e) {
     setFormData({
@@ -54,46 +56,65 @@ function SignUpForm() {
     }
   }
 
+  const toggleLogin = () => {
+    setIsExpanded(!isExpanded);
+  };
+
   return (
-    <div className="LogIncontainer">
-      {/*left panel with sign info */}
-      <div className="panel login-panel">
+    <div className="wrapper">
+    <div className={`login-text ${isExpanded ? "expand" : ""}`}>
+      <button className="cta" onClick={toggleLogin}>
+        <i
+          className={`fas fa-chevron-${isExpanded ? "up" : "down"} fa-1x`}
+        ></i>
+      </button>
+      <div className={`text ${isExpanded ? "show-hide" : ""}`}>
         <form onSubmit={handleSubmit}>
-          <h1>Sign Up</h1>
-          <div className="Logtxt_field">
-            <label>Username</label>
-            <input
-              id="username"
-              type="text"
-              name="username"
+            <h1>Sign Up</h1>
+          <div className="input-group">
+                <input
+                  id="username"
+                  type="text"
+                  placeholder= "Username"
+                  name="username"
               value={formData.username}
               onChange={handleChange}
-            />
-            {errors.username && <p className="error">{errors.username}</p>}
-          </div>
-          <div className="Logtxt_field">
-            <label>Email</label>
-            <input
-              id="email"
-              type="email"
-              name="email"
-              value={formData.email}
-              onChange={handleChange}
-            />
-            {errors.email && <p className="error">{errors.email}</p>}
-          </div>
-          <div className="Logtxt_field">
-            <label>Password</label>
-            <input
-              id="password"
-              type="password"
-              name="password"
-              value={formData.password}
-              onChange={handleChange}
-            />
+                  className="input-field"
+                  style={{ color: "black" }}
+                />
+               {errors.username && <p className="error">{errors.username}</p>}
+
+              </div>
+
+              <div className="input-group">
+                <input
+                    id="email"
+                  type="email"
+                  placeholder="Email"
+                  name="email"
+                  value={formData.email}
+                  onChange={handleChange}
+                  className="input-field"
+                  style={{ color: "black" }}
+                />
+                 {errors.email && <p className="error">{errors.email}</p>}
+
+              </div>
+
+              <div className="input-group">
+                <input
+                    id="password"
+                  type="password"
+                  name="password"
+                  placeholder="Password"
+                  style={{ color: "black" }}
+                  value={formData.password}
+                  onChange={handleChange}
+                  className="input-field"
+                />
             {errors.password && <p className="error">{errors.password}</p>}
-          </div>
-          <input type="submit" value="Sign Up" />{" "}
+              </div>
+          
         </form>
         <div className="Logsignup_link">
           Already have an account?{" "}
@@ -102,17 +123,19 @@ function SignUpForm() {
           </a>
         </div>
       </div>
-      {/* Right panel */}
-      <div className="panel info-panel">
-        <div className="Logbox-container">
-          <div className="Logbox"></div>
-          <div className="Logbox">
-            <span>Sign Up</span>
-          </div>
-          <div className="Logbox"></div>
-        </div>
       </div>
-    </div>
+      <div className="call-text">
+  <h1>
+    Show us your <span>creative</span> side
+  </h1>
+  <div className="SignButt">
+  <form onSubmit={handleSubmit}>
+    <input type="submit" value="Sign Up" />
+  </form>
+  </div>
+</div>
+      </div>
+
   );
 }
 
