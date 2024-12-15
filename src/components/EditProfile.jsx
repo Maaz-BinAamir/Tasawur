@@ -113,6 +113,26 @@ const EditProfile = () => {
         <form onSubmit={handleSubmit}>
           <h1>User Details</h1>
 
+          {/* Profile Picture Upload */}
+          <div className="profile_imgS">
+            {previewUrl && (
+              <img
+                className="profile-img-preview"
+                src={previewUrl}
+                alt="Profile preview"
+              />
+            )}
+            <input
+              type="file"
+              name="profile_picture"
+              onChange={(e) => {
+                setImage(e.target.files[0]);
+                setPreviewUrl(URL.createObjectURL(e.target.files[0])); // Preview image
+              }}
+            />
+            
+          </div>
+
           <div className="userLogtxt_field">
             <input
               type="text"
@@ -152,25 +172,6 @@ const EditProfile = () => {
             />
             <label>Bio</label>
             <span></span>
-          </div>
-
-          {/* Profile Picture Upload */}
-          <div className="profile_imgS">
-            <input
-              type="file"
-              name="profile_picture"
-              onChange={(e) => {
-                setImage(e.target.files[0]);
-                setPreviewUrl(URL.createObjectURL(e.target.files[0])); // Preview image
-              }}
-            />
-            {previewUrl && (
-              <img
-                className="profile-img-preview"
-                src={previewUrl}
-                alt="Profile preview"
-              />
-            )}
           </div>
 
           <button className="sub">Submit</button>

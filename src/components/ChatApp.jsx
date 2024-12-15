@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from "react";
 import { supabase } from "./Utility/SupaBaseClient";
 import "../style/ChatApp.css";
+import NavBar from "./NavBar.jsx";
 
 const ChatApp = () => {
   const currentUserId = Number(localStorage.getItem("userID"));
@@ -99,6 +100,8 @@ const ChatApp = () => {
   };
 
   return (
+    <>
+    <NavBar />
     <div className="chat-app-wrapper">
       <div className="chat-app">
         <div className="sidebar">
@@ -115,11 +118,11 @@ const ChatApp = () => {
               >
                 <img
                   src={
-                    user.profile_pic || `https://i.pravatar.cc/48?u=${user.id}`
+                    user.profile_picture
                   }
                   alt={user.username}
                   className="user-avatar"
-                />
+                />
                 <span>{user.username}</span>
               </li>
             ))}
@@ -129,7 +132,6 @@ const ChatApp = () => {
         <div className="chat-area">
           {selectedUser ? (
             <>
-              <h3>{selectedUser.username}</h3>
               <div
                 className="messages"
                 style={{
@@ -163,11 +165,12 @@ const ChatApp = () => {
               </div>
             </>
           ) : (
-            <p>Select a user to chat with</p>
+            <p className="select-user">Select a user to chat with</p>
           )}
         </div>
       </div>
     </div>
+    </>
   );
 };
 

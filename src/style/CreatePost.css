@@ -36,6 +36,18 @@ body {
   font-size: 1.5rem;
 }
 
+.create-post-wrapper .image-preview{
+  margin-top: 20px;
+  width: 360px;
+  height: 360px;
+  object-fit: cover;
+  margin-bottom: 20px;
+  margin-left: 260px;
+  margin-right: auto;
+  border-radius: 5px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
 .create-post-wrapper .categories > label {
   font-size: 1.2rem;
   font-weight: bold;

@@ -26,7 +26,9 @@ function NavBar() {
       <nav className="NavBar">
         {/* Logo Section */}
         <div className="logo" onClick={openHome}>
-          <img src="logo.jpg" alt="Logo" className="logo-img" />
+        <a href="#" className="logo.img" >
+            <i className="fas fa-palette"></i>
+          </a>
         </div>
 
         {/* Search Bar Section */}

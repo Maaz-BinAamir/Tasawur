@@ -203,7 +203,7 @@ form .userLogtxt_field {
 }
 
 /* Profile container and image styling */
-.profile-container {
+.editprofile-container {
   padding: 10px;
   border-radius: 10px;
   margin-bottom: 20px;
@@ -214,7 +214,7 @@ form .userLogtxt_field {
   align-items: center;
 }
 
-.profile-container label {
+.editprofile-container label {
   font-size: 16px;
   color: #333;
   margin-bottom: 5px;
