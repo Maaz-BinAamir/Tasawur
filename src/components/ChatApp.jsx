@@ -101,75 +101,75 @@ const ChatApp = () => {
 
   return (
     <>
-    <NavBar />
-    <div className="chat-app-wrapper">
-      <div className="chat-app">
-        <div className="sidebar">
-          <h3>Users</h3>
-          <ul>
-            {users.map((user) => (
-              <li
-                key={user.id}
-                className={selectedUser?.id === user.id ? "selected" : ""}
-                onClick={() => {
-                  setSelectedUser(user);
-                  setMessages([]);
-                }}
-              >
-                <img
-                  src={
-                    user.profile_picture
-                  }
-                  alt={user.username}
-                  className="user-avatar"
-                />
-                <span>{user.username}</span>
-              </li>
-            ))}
-          </ul>
-        </div>
+      <NavBar />
+      <div className="chat-app-wrapper">
+        <div className="chat-app">
+          <div className="sidebar">
+            <h3>Users</h3>
+            <ul>
+              {users.map((user) => (
+                <li
+                  key={user.id}
+                  className={selectedUser?.id === user.id ? "selected" : ""}
+                  onClick={() => {
+                    setSelectedUser(user);
+                    setMessages([]);
+                  }}
+                >
+                  <img
+                    src={user.profile_picture}
+                    alt={user.username}
+                    className="user-avatar"
+                  />
+                  <span>{user.username}</span>
+                </li>
+              ))}
+            </ul>
+          </div>
 
-        <div className="chat-area">
-          {selectedUser ? (
-            <>
-              <div
-                className="messages"
-                style={{
-                  overflowY: "auto",
-                  maxHeight: "300px",
-                  display: "flex",
-                  flexDirection: "column",
-                }}
-              >
-                {messages.map((message) => (
-                  <div
-                    key={message.id}
-                    className={
-                      message.sender_id === currentUserId ? "sent" : "received"
-                    }
-                  >
-                    {message.content}
-                  </div>
-                ))}
-                <div ref={messagesEndRef} />
-              </div>
-              <div className="message-input">
-                <input
-                  type="text"
-                  value={newMessage}
-                  onChange={(e) => setNewMessage(e.target.value)}
-                  placeholder="Type your message"
-                  onKeyDown={(e) => e.key === "Enter" && sendMessage()}
-                />
-                <button onClick={sendMessage}>Send</button>
-              </div>
-            </>
-          ) : (
-            <p className="select-user">Select a user to chat with</p>
-          )}
+          <div className="chat-area">
+            {selectedUser ? (
+              <>
+                <div
+                  className="messages"
+                  style={{
+                    overflowY: "auto",
+                    maxHeight: "300px",
+                    display: "flex",
+                    flexDirection: "column",
+                  }}
+                >
+                  {messages.map((message) => (
+                    <div
+                      key={message.id}
+                      className={
+                        message.sender_id === currentUserId
+                          ? "sent"
+                          : "received"
+                      }
+                    >
+                      {message.content}
+                    </div>
+                  ))}
+                  <div ref={messagesEndRef} />
+                </div>
+                <div className="message-input">
+                  <input
+                    type="text"
+                    value={newMessage}
+                    onChange={(e) => setNewMessage(e.target.value)}
+                    placeholder="Type your message"
+                    onKeyDown={(e) => e.key === "Enter" && sendMessage()}
+                  />
+                  <button onClick={sendMessage}>Send</button>
+                </div>
+              </>
+            ) : (
+              <p className="select-user">Select a user to chat with</p>
+            )}
+          </div>
         </div>
       </div>
-    </div>
     </>
   );
 };
