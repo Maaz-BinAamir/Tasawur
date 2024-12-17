@@ -2,7 +2,6 @@ nav {
   display: flex;
   align-items: center;
   padding: 10px 20px;
-  /* position: fixed; */
   background-color: #ffff;
   left: 0;
   right: 0;
@@ -20,6 +19,7 @@ nav {
   display: flex;
   align-items: center;
   width: fit-content;
+  position: relative; /* Allows absolute positioning for dropdown */
 }
 
 .search {
@@ -30,8 +30,70 @@ nav {
   border: 1px solid #ddd;
   outline: none;
   width: 800px;
+  transition: border-color 0.3s;
 }
 
+.search:focus {
+  border-color: #5f5f66;
+}
+
+/* Search Menu Dropdown */
+.search-menu {
+  position: absolute; /* Float the dropdown below the search bar */
+  top: 45px; /* Adjust this based on the height of the search input */
+  left: 50%; /* Position the menu at 50% from the left */
+  transform: translateX(-50%); /* Shift the menu back by 50% of its own width to center it */
+  width: 80%; /* Adjust width to be percentage based for better responsiveness */
+  max-width: 800px; /* Max width for consistency */
+  background-color: #fff;
+  border: 1px solid #ddd;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  border-radius: 8px;
+  z-index: 1000; /* Ensure it is above other elements */
+  padding: 10px; /* Add padding to avoid text touching the edges */
+}
+
+/* Search Menu Dropdown */
+.search-menu {
+  position: absolute; /* Float the dropdown below the search bar */
+  top: 45px; /* Adjust this based on the height of the search input */
+  left: 50%; /* Position the menu at 50% from the left */
+  transform: translateX(-50%); /* Shift the menu back by 50% of its own width to center it */
+  width: 80%; /* Adjust width to be percentage based for better responsiveness */
+  max-width: 800px; /* Max width for consistency */
+  background-color: #fff;
+  border: 1px solid #ddd;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  border-radius: 8px;
+  z-index: 1000; /* Ensure it is above other elements */
+  padding: 10px; /* Add padding to avoid text touching the edges */
+}
+
+/* Adjusting the buttons in the dropdown */
+.search-menu ul {
+  list-style: none;
+  margin: 0;
+  padding: 10px 0;
+  display: flex;
+  flex-wrap: wrap; /* Make the buttons wrap if there are too many */
+  gap: 10px; /* Spacing between each button */
+}
+
+.search-menu li {
+  padding: 10px 20px;
+  cursor: pointer;
+  transition: background 0.2s;
+  border: 1px solid #ddd;
+  border-radius: 50%;
+  text-align: center;
+  display: inline-block;
+}
+
+.search-menu li:hover {
+  background-color: #f5f5f5;
+}
+
+/* Links Section */
 .links {
   display: flex;
   gap: 15px;

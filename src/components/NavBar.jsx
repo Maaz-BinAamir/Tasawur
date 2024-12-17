@@ -1,9 +1,12 @@
 import "../style/NavBar.css";
 import "@fortawesome/fontawesome-free/css/all.min.css";
 import { useNavigate } from "react-router-dom";
+import { useState } from "react";
+import SearchMenu from "./SearchMenu";
 
 function NavBar() {
   const navigate = useNavigate();
+  const [isSearchMenuOpen, setSearchMenuOpen] = useState(false);
 
   const openCreatePost = () => {
     navigate(`/create_post`);
@@ -21,6 +24,14 @@ function NavBar() {
     navigate(`/chat`);
   };
 
+  const handleSearchFocus = () => {
+    setSearchMenuOpen(true);
+  };
+
+  const handleSearchBlur = () => {
+    setTimeout(() => setSearchMenuOpen(false), 200); 
+  };
+
   return (
     <>
       <nav className="NavBar">
@@ -32,8 +43,10 @@ function NavBar() {
         </div>
 
         {/* Search Bar Section */}
-        <div className="searchBar">
-          <input type="text" className="search" placeholder="Search" />
+        <div className="SearchMenu">
+          <input type="text" className="search" placeholder="Search" onFocus={handleSearchFocus}
+            onBlur={handleSearchBlur}/>
+            {isSearchMenuOpen && <SearchMenu />}
         </div>
 
         {/* Icons Section */}

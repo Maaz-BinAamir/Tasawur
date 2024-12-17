@@ -53,7 +53,7 @@ def login_user(request):
 @permission_classes([AllowAny])
 def google_login(request):
     token = request.data.get('access_token')
-
+   
     if not token:
         return Response({'error': 'No token provided.'}, status=status.HTTP_400_BAD_REQUEST)
 
@@ -61,7 +61,7 @@ def google_login(request):
         idinfo = id_token.verify_oauth2_token(
             token, requests.Request(), "168844986010-vejil6mcti4b0aarthtbgbj0ivf3f2ql.apps.googleusercontent.com"
         )
-
+        print(idinfo)
         email = idinfo.get('email')
         first_name = idinfo.get('given_name', '')
         last_name = idinfo.get('family_name', '')
