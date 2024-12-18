@@ -22,6 +22,7 @@ function NavBar() {
     navigate(`/chat`);
   };
 
+
   return (
     <nav className="NavBar">
       {/* Logo Section */}

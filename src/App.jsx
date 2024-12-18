@@ -7,6 +7,7 @@ import Profile from "./components/Profile";
 import EditProfile from "./components/EditProfile";
 import CreatePost from "./components/CreatePost";
 import ChatApp from "./components/ChatApp";
+import Category from "./components/Category";
 
 function App() {
   return (
