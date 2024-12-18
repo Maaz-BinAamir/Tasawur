@@ -70,6 +70,9 @@ function HomePosts() {
 
   // Fetch posts when component mounts or page/search changes
   useEffect(() => {
+    if (page === 1) {
+      setPosts([]);
+    }
     fetchPosts();
   }, [page, searchParams, fetchPosts]);
 

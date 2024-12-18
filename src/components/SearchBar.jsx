@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from "react";
-// import { useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import "../style/SearchBar.css";
 
 const SearchBar = () => {
@@ -8,7 +8,7 @@ const SearchBar = () => {
   const [previousSearches, setPreviousSearches] = useState([]);
   const [selectedCategory, setSelectedCategory] = useState("");
   const searchRef = useRef(null);
-  // const navigate = useNavigate();
+  const navigate = useNavigate();
 
   const categories = [
     "Sketching",
@@ -51,11 +51,11 @@ const SearchBar = () => {
       );
     }
 
-    // navigate(`/search?q=${encodeURIComponent(query)}&category=${category}`);
+    navigate(`/search?q=${encodeURIComponent(query)}&category=${category}`);
 
-    window.location.href = `/search?q=${encodeURIComponent(
-      query
-    )}&category=${category}`;
+    // window.location.href = `/search?q=${encodeURIComponent(
+    //   query
+    // )}&category=${category}`;
 
     setSearchTerm("");
     setSelectedCategory("");
