@@ -5,17 +5,19 @@ import Comments from "./Comments.jsx";
 import { useParams, useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
 import "../style/Posts.css";
-import { Heart, MessageCircle } from "lucide-react";
+import { Heart, MessageCircle, MoreVertical } from "lucide-react";
 
 function Post() {
   const { postID } = useParams();
 
+  const [isUsername, setIsUsername] = useState("");
   const [post, setPost] = useState(null);
   const [currentLikes, setCurrentLikes] = useState(0);
   const [hasLiked, setHasLiked] = useState(false);
   const [loading, setLoading] = useState(true);
   const [showPopup, setShowPopup] = useState(false);
   const [copied, setCopied] = useState(false);
+  const [dropdownVisible, setDropdownVisible] = useState(false);
 
   const navigate = useNavigate();
 
@@ -37,7 +39,7 @@ function Post() {
         setPost(response.data);
         setCurrentLikes(response.data.likes);
         setHasLiked(response.data.hasLiked);
-        // console.log(typeof response.data.hasLiked);
+        setIsUsername(response.data.isAuthor);
         setLoading(false);
       } catch (error) {
         console.error("Error fetching post:", error);
@@ -47,6 +49,28 @@ function Post() {
 
     fetchPost();
   }, [postID]);
+
+  const handleDelete = async () => {
+    try {
+      setDropdownVisible(false);
+
+      const authToken = JSON.parse(localStorage.getItem("authToken")) || {};
+
+      await axios.delete(`http://127.0.0.1:8000/api/posts/delete/${postID}/`, {
+        headers: {
+          Authorization: `Bearer ${authToken.access}`,
+        },
+      });
+
+      navigate("/home");
+    } catch (error) {
+      console.error("Error deleting post:", error);
+    }
+  };
+
+  const toggleDropdown = () => {
+    setDropdownVisible(!dropdownVisible);
+  };
 
   const handleLike = async () => {
     setHasLiked((liked) => !liked);
@@ -107,6 +131,24 @@ function Post() {
                 <strong className="post-author-name">
                   {post.author.username}
                 </strong>
+              </div>
+              <div className="post-options-container">
+                {isUsername && (
+                  <button
+                    className="options-btn"
+                    onClick={toggleDropdown}
+                    aria-label="Post Options"
+                  >
+                    <MoreVertical size={20} />
+                  </button>
+                )}
+                {dropdownVisible && (
+                  <div className="dropdown-menu">
+                    <button className="dropdown-option" onClick={handleDelete}>
+                      Delete Post
+                    </button>
+                  </div>
+                )}
               </div>
               <span className="post-timestamp">{post.createdAt}</span>
             </div>

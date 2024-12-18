@@ -1,6 +1,7 @@
 import "../style/NavBar.css";
 import "@fortawesome/fontawesome-free/css/all.min.css";
 import { useNavigate } from "react-router-dom";
+import SearchBar from "./SearchBar";
 
 function NavBar() {
   const navigate = useNavigate();
@@ -14,7 +15,7 @@ function NavBar() {
   };
 
   const openHome = () => {
-    navigate(`/homeposts`);
+    navigate(`/home`);
   };
 
   const openChatApp = () => {
@@ -22,37 +23,35 @@ function NavBar() {
   };
 
   return (
-    <>
-      <nav className="NavBar">
-        {/* Logo Section */}
-        <div className="logo" onClick={openHome}>
-        <a href="#" className="logo.img" >
-            <i className="fas fa-palette"></i>
-          </a>
-        </div>
+    <nav className="NavBar">
+      {/* Logo Section */}
+      <div className="logo" onClick={openHome}>
+        <a href="#" className="logo-img">
+          <i className="fas fa-palette"></i>
+        </a>
+      </div>
 
-        {/* Search Bar Section */}
-        <div className="searchBar">
-          <input type="text" className="search" placeholder="Search" />
-        </div>
+      {/* Search Bar Section */}
+      <div className="search-wrapper">
+        <SearchBar />
+      </div>
 
-        {/* Icons Section */}
-        <div className="links">
-          <a href="#" className="icon" onClick={openCreatePost}>
-            <i className="fas fa-plus"></i>
-          </a>
-          <a href="#" className="icon" onClick={openHome}>
-            <i className="fas fa-home"></i>
-          </a>
-          <a href="#" className="icon" onClick={openChatApp}>
-            <i className="fas fa-comment-dots"></i>
-          </a>
-          <a href="#" className="icon" onClick={openProfile}>
-            <i className="fas fa-user"></i>
-          </a>
-        </div>
-      </nav>
-    </>
+      {/* Icons Section */}
+      <div className="links">
+        <a href="#" className="icon" onClick={openCreatePost}>
+          <i className="fas fa-plus"></i>
+        </a>
+        <a href="#" className="icon" onClick={openHome}>
+          <i className="fas fa-home"></i>
+        </a>
+        <a href="#" className="icon" onClick={openChatApp}>
+          <i className="fas fa-comment-dots"></i>
+        </a>
+        <a href="#" className="icon" onClick={openProfile}>
+          <i className="fas fa-user"></i>
+        </a>
+      </div>
+    </nav>
   );
 }
 

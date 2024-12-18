@@ -1,4 +1,4 @@
-from .models import CustomUser, Posts, Comments, CommentLikes
+from .models import CustomUser, Posts, Comments, CommentLikes, Category, UserPreferences
 from rest_framework import serializers
 
 class UserSerializer(serializers.ModelSerializer):
@@ -41,3 +41,13 @@ class CommentSaveSerializer(serializers.ModelSerializer):
         model = Comments
         fields = '__all__'
         read_only_fields = ('time_created',)
+        
+class CategoriesSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Category
+        fields = ["name"]
+        
+class PreferencesSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = UserPreferences
+        fields = ["category_id"]

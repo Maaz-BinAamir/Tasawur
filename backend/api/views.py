@@ -1,7 +1,7 @@
 from supabase import create_client, Client
-from api.models import CustomUser, Posts, Comments, PostLikes, CommentLikes
+from api.models import Category, CustomUser, Follower_Following, PostCategories, Posts, Comments, PostLikes, CommentLikes, UserPreferences
 from django.db import models
-from .serializers import PostsSerializer, UserSerializer, CommentsSerializer, CommentSaveSerializer
+from .serializers import CategoriesSerializer, PostsSerializer, PreferencesSerializer, UserSerializer, CommentsSerializer, CommentSaveSerializer
 from django.contrib.auth import authenticate
 from google.oauth2 import id_token
 from google.auth.transport import requests
@@ -10,6 +10,7 @@ from rest_framework import status
 from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework_simplejwt.tokens import RefreshToken
+import random
 
 url = "https://kwebqbdcvbwonprlzwuy.supabase.co"  # Replace with your Supabase URL
 key = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imt3ZWJxYmRjdmJ3b25wcmx6d3V5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3MzI0NDUxNDIsImV4cCI6MjA0ODAyMTE0Mn0.urhzDnWoKR14FmLG58bNCZ5-l-SEOhpG0Lk1-DI2vG8"  # Replace with your Supabase API Key
@@ -90,9 +91,13 @@ def google_login(request):
 def user_profile(request):
     user = request.user
     posts = Posts.objects.filter(user_id=user.id)
+    preferences = UserPreferences.objects.filter(user_id=user.id)
+    followers = Follower_Following.objects.filter(following=user.id).count()
+    following = Follower_Following.objects.filter(follower=user.id).count()
     
     serialized_posts = PostsSerializer(posts, many=True)
-    
+    serialized_preferences = PreferencesSerializer(preferences, many=True)
+    # print(serialized_preferences.data)
     return Response({
         'id': user.id,
         'email': user.email,
@@ -102,6 +107,9 @@ def user_profile(request):
         'last_name': user.last_name,
         'bio': user.bio,
         'posts': serialized_posts.data,
+        'preferences': serialized_preferences.data,
+        'followers' : followers,
+        'following' : following,
     }, status=status.HTTP_200_OK)
         
 @api_view(['GET'])
@@ -109,6 +117,9 @@ def user_profile(request):
 def other_user_profile(request, user_id):
     user = CustomUser.objects.get(id=user_id)
     posts = Posts.objects.filter(user_id=user_id)
+    followers = Follower_Following.objects.filter(following=user.id).count()
+    following = Follower_Following.objects.filter(follower=user.id).count()
+    hasFollowed = Follower_Following.objects.filter(following=user.id, follower=request.user.id).exists()
     
     serialized_posts = PostsSerializer(posts, many=True)
     
@@ -121,6 +132,9 @@ def other_user_profile(request, user_id):
         'last_name': user.last_name,
         'bio': user.bio,
         'posts': serialized_posts.data,
+        'followers' : followers,
+        'following' : following,
+        'hasFollowed': hasFollowed,
     }, status=status.HTTP_200_OK)
 
 @api_view(['PUT'])
@@ -164,6 +178,22 @@ def update_user(request):
     
     if serializer.is_valid():
         serializer.save()
+        
+        preferences = request.data.get("preferences")
+        
+        current_preferences = UserPreferences.objects.filter(user_id=user)
+        
+        
+        for current_preference in current_preferences:
+            if str(current_preference.category_id.id) not in preferences:
+                current_preference.delete()
+
+        for preference_id in preferences:
+            if not preference_id.isnumeric():
+                continue
+            preference = Category.objects.get(id=preference_id)
+            UserPreferences.objects.get_or_create(user_id=user, category_id=preference)
+                
         return Response(serializer.data, status=status.HTTP_200_OK)
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
@@ -200,12 +230,19 @@ def create_posts(request):
             "image": request.data.get("image"), 
             "image": image_url, 
             "user_id": request.user.id
-            }
+            }        
         
         # Serialize and save the post
         serializer = PostsSerializer(data=data)
         if serializer.is_valid():
-            serializer.save()
+            post = serializer.save()
+            
+            categories = request.data.get("categories")
+            
+            for category_id in categories:
+                category = Category.objects.get(id=category_id)
+                PostCategories.objects.create(post_id=post, category_id=category)
+                
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         print(serializer.errors)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
@@ -236,7 +273,13 @@ def delete_post(request, post_id):
         post = Posts.objects.get(id=post_id)
     except Posts.DoesNotExist:
         return Response({'error': 'Post not found.'}, status=status.HTTP_404_NOT_FOUND)
-
+    try:
+        # Remove the image from Supabase storage
+        filename = post.image.split('/')[-1][:-1]
+        supabase.storage.from_('posts').remove([filename])
+    except:
+        return Response({'error': 'Failed to delete image from Supabase.'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+    
     post.delete()
     return Response({'message': 'Post deleted successfully.'}, status=status.HTTP_204_NO_CONTENT)
 
@@ -261,15 +304,66 @@ def post_details(request, post_id):
         'hasLiked': hasLiked,
         'time_created': post.time_created,
         'comments': serialized_comments.data,
+        'isAuthor': user.id == request.user.id,
     }, status=status.HTTP_200_OK)
 
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
 def home_posts(request):
-    # Fetch all posts (you can add filters if needed)
+    # Fetch the query parameters
+    query = request.query_params.get('q', '').strip()
+    category = request.query_params.get('category', '').strip()
+    print("query", query)
+    print("category", category)
+    # Base queryset
     posts = Posts.objects.all().order_by('-time_created')
 
+    # Filter by search query
+    if query:
+        posts = posts.filter(description__icontains=query)
+
+    # Filter by category
+    if category:
+        posts = posts.filter(categories__category_id=category)
+
+    # If no query and category, apply percentage-based recommendation
+    if not query and not category:
+        user = request.user
+
+        # Fetch user's preferred categories
+        preferred_category_ids = UserPreferences.objects.filter(user_id=user.id).values_list(
+            'category_id', flat=True
+        )
+
+        # 50% posts from preferred categories
+        preferred_posts = Posts.objects.filter(
+            categories__category_id__in=preferred_category_ids
+        ).order_by('-time_created')
+        preferred_posts = list(preferred_posts[:50])  # Limit to recent 50 posts
+
+        # 30% posts from most liked (random from top 50 posts with most likes)
+        top_liked_posts = Posts.objects.annotate(
+            like_count=models.Count('post_likes')
+        ).order_by('-like_count')[:50]
+        random_top_liked_posts = random.sample(list(top_liked_posts), min(15, len(top_liked_posts)))
+
+        # 20% posts from artists with 0-5 likes (random)
+        low_liked_posts = Posts.objects.annotate(
+            like_count=models.Count('post_likes')
+        ).filter(like_count__range=(0, 5))
+        random_low_liked_posts = random.sample(list(low_liked_posts), min(10, len(low_liked_posts)))
+
+        # Combine posts into a final list
+        combined_posts = preferred_posts[:25] + random_top_liked_posts + random_low_liked_posts
+        random.shuffle(combined_posts)  # Shuffle for randomness
+
+        # Serialize and return combined posts
+        serializer = PostsSerializer(combined_posts, many=True)
+        return Response(serializer.data)
+
+    # Serialize the filtered posts
     serializer = PostsSerializer(posts, many=True)
+    print(serializer.data)
     return Response(serializer.data)
 
 @api_view(['POST'])
@@ -314,3 +408,21 @@ def like_comment(request, comment_id):
         CommentLikes.objects.filter(comment_id=comment, user_id=user).delete()
     CommentLikes.objects.create(comment_id=comment, user_id=user)
     return Response({'message': 'Comment liked successfully.'}, status=status.HTTP_201_CREATED)
+
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+def follow_user(request, user_id):
+    user = CustomUser.objects.get(id=user_id)
+    request_user = CustomUser.objects.get(id=request.user.id)
+    if (Follower_Following.objects.filter(following=user, follower=request_user).exists()):
+        Follower_Following.objects.filter(following=user, follower=request_user).delete()
+        return Response({'message': 'User unfollowed successfully.'}, status=status.HTTP_204_NO_CONTENT)
+    Follower_Following.objects.create(following=user, follower=request_user)
+    return Response({'message': 'User followed successfully.'}, status=status.HTTP_201_CREATED)
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def categories(request):
+    categories = Category.objects.all()
+    categories_serializer = CategoriesSerializer(categories, many=True)
+    return Response(categories_serializer.data, status=status.HTTP_200_OK)

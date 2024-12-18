@@ -34,6 +34,7 @@
   align-items: center;
   padding: 12px 15px;
   border-bottom: 1px solid #efefef;
+  position: relative;
 }
 
 .post-author-info {
@@ -54,6 +55,58 @@
 .post-author-name {
   font-size: 0.9rem;
   color: #262626;
+}
+
+.post-options-container {
+  position: absolute;
+  top: 20px;
+  right: 15px;
+  display: inline-block;
+}
+
+.options-btn {
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  font-size: 1.5rem;
+  color: #8e8e8e;
+}
+
+.options-btn:hover {
+  color: #262626;
+}
+
+.dropdown-menu {
+  position: absolute;
+  right: 0;
+  top: 30px;
+  background-color: white;
+  border: 1px solid #dbdbdb;
+  border-radius: 5px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  z-index: 1000;
+  padding: 5px 0;
+  min-width: 120px;
+}
+
+.dropdown-option {
+  width: 100%;
+  text-align: left;
+  background: none;
+  border: none;
+  padding: 10px 15px;
+  color: #262626;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+
+.dropdown-option:hover {
+  background-color: #f7f7f7;
 }
 
 .post-timestamp {
@@ -155,7 +208,7 @@
 }
 
 .toggle-comments-btn:hover {
-  color:#ae6077;
+  color: #ae6077;
 }
 
 /* Responsive Design */

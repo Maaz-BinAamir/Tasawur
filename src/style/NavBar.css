@@ -2,7 +2,6 @@ nav {
   display: flex;
   align-items: center;
   padding: 10px 20px;
-  /* position: fixed; */
   background-color: #ffff;
   left: 0;
   right: 0;
@@ -11,25 +10,17 @@ nav {
 }
 
 .logo-img {
-  height: 100px;
+  height: 40px;
   cursor: pointer;
-}
-
-.search-container {
-  flex: 1;
   display: flex;
   align-items: center;
-  width: fit-content;
 }
 
-.search {
-  flex: 1;
-  margin: 0 10px;
-  padding: 10px 15px;
-  border-radius: 20px;
-  border: 1px solid #ddd;
-  outline: none;
-  width: 800px;
+.search-wrapper {
+  flex-grow: 1;
+  display: flex;
+  justify-content: center;
+  margin: 0 20px;
 }
 
 .links {

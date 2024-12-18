@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Arimo:wght@400;700&display=swap');
+@import url("https://fonts.googleapis.com/css2?family=Arimo:wght@400;700&display=swap");
 
 body {
   margin: 0;
@@ -36,14 +36,14 @@ body {
   border-right: 1px solid #dcdcdc;
 }
 .userinfo-panel {
-  background-color: #FFC0CB; 
-  color: #fff; 
+  background-color: #ffc0cb;
+  color: #fff;
   text-align: center;
-  font-size: 50px; 
+  font-size: 50px;
   display: flex;
   justify-content: center;
   align-items: center;
-  flex-direction: column; 
+  flex-direction: column;
   position: relative;
   padding: 20px;
   gap: 20px;
@@ -52,8 +52,8 @@ body {
 .userinfo-panel .userLogbox-container {
   display: flex;
   justify-content: space-between;
-  width: 100%; 
-  gap: 0px; 
+  width: 100%;
+  gap: 0px;
 }
 
 .userLogbox span {
@@ -61,31 +61,31 @@ body {
   top: 50%;
   left: 50%;
   font-size: 80px;
-  font-family: 'Arimo', sans-serif; 
+  font-family: "Arimo", sans-serif;
   color: #fff;
   text-shadow: 2px 2px 5px rgba(212, 65, 107, 0.7);
   transform: translate(-50%, -50%);
-  z-index: 1; 
+  z-index: 1;
 }
 
 .userinfo-panel .userLogbox {
-  flex: 1; 
-  height: 60vh; 
+  flex: 1;
+  height: 60vh;
   border-radius: 10px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); 
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
 }
 
 /* Colors for the boxes */
 .userinfo-panel .userLogbox:nth-child(1) {
-  background-color: #FFB6C1; 
+  background-color: #ffb6c1;
 }
 
 .userinfo-panel .userLogbox:nth-child(2) {
-  background-color: #ffd6cd; 
+  background-color: #ffd6cd;
 }
 
 .userinfo-panel .userLogbox:nth-child(3) {
-  background-color: #eeddc9; 
+  background-color: #eeddc9;
 }
 
 /* Form and fields */
@@ -138,7 +138,7 @@ form .userLogtxt_field {
 }
 
 .userLogtxt_field span::before {
-  content: '';
+  content: "";
   position: absolute;
   top: 40px;
   left: 0;
@@ -146,7 +146,7 @@ form .userLogtxt_field {
   height: 0.25px;
   opacity: 50;
   background: #5f5f66;
-  transition: .5s;
+  transition: 0.5s;
 }
 
 .userLogtxt_field input:focus ~ label,
@@ -172,20 +172,20 @@ form .userLogtxt_field {
 
 .sub {
   width: 50%;
-    height: 50px;
+  height: 50px;
   border: 0.5px solid;
   border-radius: 25px;
   font-size: 18px;
   font-weight: 700;
   cursor: pointer;
-  margin: 0 auto;  /* Centers the button horizontally */
-  display: block;  /* Ensures the button behaves as a block element */
+  margin: 0 auto; /* Centers the button horizontally */
+  display: block; /* Ensures the button behaves as a block element */
 }
 
 .sub:hover {
-  background: #FFC0CB;
+  background: #ffc0cb;
   color: #e9f4fb;
-  transition: .5s;
+  transition: 0.5s;
 }
 
 .Logsignup_link {
@@ -194,8 +194,6 @@ form .userLogtxt_field {
   font-size: 16px;
   color: #666666;
 }
-
-
 
 .HomeAbout {
   width: 100vw;
@@ -278,4 +276,32 @@ form .userLogtxt_field {
   height: 70px;
   border-radius: 50%;
   object-fit: cover;
+}
+
+/* Preferences Section */
+.category-preferences {
+  margin: 20px 0;
+}
+
+.category-preferences h3 {
+  margin-bottom: 10px;
+  font-size: 16px;
+  color: #333;
+}
+
+.categories {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.category-option {
+  display: flex;
+  align-items: center;
+  font-size: 14px;
+  color: #555;
+}
+
+.category-option input {
+  margin-right: 5px;
 }

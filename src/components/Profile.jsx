@@ -8,6 +8,8 @@ function Profile() {
   const { id } = useParams();
 
   const [user, setUser] = useState(null);
+  const [follow, setFollow] = useState(false);
+  const [followers, setFollowers] = useState(0);
   const [showPopup, setShowPopup] = useState(false);
   const [loading, setLoading] = useState(true);
   const [copied, setCopied] = useState(false);
@@ -29,7 +31,8 @@ function Profile() {
             Authorization: `Bearer ${authToken.access}`,
           },
         });
-
+        setFollow(response.data.hasFollowed);
+        setFollowers(response.data.followers);
         setUser(response.data);
         setLoading(false);
       } catch (error) {
@@ -43,6 +46,29 @@ function Profile() {
 
   const openEditProfile = () => {
     navigate(`/edit_profile`);
+  };
+
+  const handleFollow = async () => {
+    try {
+      const authToken = JSON.parse(localStorage.getItem("authToken")) || {};
+      await axios.post(
+        `http://127.0.0.1:8000/api/profile/${id}/follow/`,
+        {},
+        {
+          headers: {
+            Authorization: `Bearer ${authToken.access}`,
+          },
+        }
+      );
+      if (follow) {
+        setFollowers((prev) => prev - 1);
+      } else {
+        setFollowers((prev) => prev + 1);
+      }
+      setFollow((prev) => !prev);
+    } catch (error) {
+      console.error("Error following user:", error);
+    }
   };
 
   const openSharePopup = () => {
@@ -78,19 +104,26 @@ function Profile() {
 
             <div className="profile-stats">
               <span>{user.posts.length} posts</span>
-              <span>{user.followers} followers</span>
+              <span>{followers} followers</span>
               <span>{user.following} following</span>
             </div>
 
             <p className="profile-bio">{user.bio}</p>
 
             <div className="profile-actions">
-              <button
-                onClick={openEditProfile}
-                className="profile-btn edit-btn"
-              >
-                Edit Profile
-              </button>
+              {id && (
+                <button onClick={handleFollow} className="profile-btn edit-btn">
+                  {follow ? "Unfollow" : "Follow"}
+                </button>
+              )}
+              {!id && (
+                <button
+                  onClick={openEditProfile}
+                  className="profile-btn edit-btn"
+                >
+                  Edit Profile
+                </button>
+              )}
               <button
                 onClick={openSharePopup}
                 className="profile-btn share-btn"

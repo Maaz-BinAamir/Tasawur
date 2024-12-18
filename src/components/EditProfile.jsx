@@ -14,6 +14,7 @@ const EditProfile = () => {
     first_name: "",
     last_name: "",
     bio: "",
+    preferences: [],
   });
   const [image, setImage] = useState(null);
   const [errors, setErrors] = useState({});
@@ -23,6 +24,17 @@ const EditProfile = () => {
   const location = useLocation();
   const searchParams = new URLSearchParams(location.search);
   const signup = searchParams.get("signup");
+
+  const categoryOptions = [
+    { id: 1, name: "Sketching" },
+    { id: 2, name: "Painting" },
+    { id: 3, name: "Digital Art" },
+    { id: 4, name: "Journaling" },
+    { id: 5, name: "Photography" },
+    { id: 6, name: "Doodling" },
+    { id: 7, name: "Sculpting" },
+    { id: 8, name: "Crocheting" },
+  ];
 
   useEffect(() => {
     const fetchProfile = async () => {
@@ -36,8 +48,11 @@ const EditProfile = () => {
           first_name: response.data.first_name || "",
           last_name: response.data.last_name || "",
           bio: response.data.bio || "",
+          preferences:
+            response.data.preferences.map((pref) => pref.category_id) || [],
         });
         setPreviewUrl(response.data.profile_pic);
+        console.log(response.data.preferences);
       } catch (error) {
         console.error("Error fetching profile:", error);
       }
@@ -50,6 +65,18 @@ const EditProfile = () => {
     setFormData({
       ...formData,
       [e.target.name]: e.target.value,
+    });
+  };
+
+  const handlePreferencesChange = (id) => {
+    setFormData((prevData) => {
+      const isSelected = prevData.preferences.includes(id);
+      return {
+        ...prevData,
+        preferences: isSelected
+          ? prevData.preferences.filter((pref) => pref !== id)
+          : [...prevData.preferences, id],
+      };
     });
   };
 
@@ -66,6 +93,7 @@ const EditProfile = () => {
       formDataToSend.append("first_name", formData.first_name);
       formDataToSend.append("last_name", formData.last_name);
       formDataToSend.append("bio", formData.bio);
+      formDataToSend.append("preferences", formData.preferences);
 
       if (image) {
         formDataToSend.append("profile_picture", image);
@@ -84,7 +112,7 @@ const EditProfile = () => {
 
       console.log("User updated successfully:", response.data);
       if (signup) {
-        navigate("/homeposts");
+        navigate("/home");
       } else {
         navigate("/profile");
       }
@@ -108,10 +136,9 @@ const EditProfile = () => {
 
   return (
     <div className="userLogIncontainer">
-      {/* Left panel with User form */}
       <div className="userpanel login-panel">
         <form onSubmit={handleSubmit}>
-          <h1>User Details</h1>
+          <h1>Edit Profile</h1>
 
           {/* Profile Picture Upload */}
           <div className="profile_imgS">
@@ -127,12 +154,12 @@ const EditProfile = () => {
               name="profile_picture"
               onChange={(e) => {
                 setImage(e.target.files[0]);
-                setPreviewUrl(URL.createObjectURL(e.target.files[0])); // Preview image
+                setPreviewUrl(URL.createObjectURL(e.target.files[0]));
               }}
             />
-            
           </div>
 
+          {/* First Name */}
           <div className="userLogtxt_field">
             <input
               type="text"
@@ -145,8 +172,9 @@ const EditProfile = () => {
               <p className="error-text">{errors.first_name}</p>
             )}
             <label>First Name</label>
-            <span></span>
           </div>
+
+          {/* Last Name */}
           <div className="userLogtxt_field">
             <input
               type="text"
@@ -159,9 +187,9 @@ const EditProfile = () => {
               <p className="error-text">{errors.last_name}</p>
             )}
             <label>Last Name</label>
-            <span></span>
           </div>
 
+          {/* Bio */}
           <div className="userLogtxt_field">
             <input
               type="text"
@@ -171,22 +199,27 @@ const EditProfile = () => {
               required
             />
             <label>Bio</label>
-            <span></span>
+          </div>
+
+          {/* Preferences */}
+          <div className="category-preferences">
+            <h3>Select Preferences</h3>
+            <div className="categories">
+              {categoryOptions.map((category) => (
+                <label key={category.id} className="category-option">
+                  <input
+                    type="checkbox"
+                    checked={formData.preferences.includes(category.id)}
+                    onChange={() => handlePreferencesChange(category.id)}
+                  />
+                  {category.name}
+                </label>
+              ))}
+            </div>
           </div>
 
           <button className="sub">Submit</button>
         </form>
-      </div>
-
-      {/* Right panel */}
-      <div className="userpanel userinfo-panel">
-        <div className="userLogbox-container">
-          <div className="userLogbox"></div>
-          <div className="userLogbox">
-            <span>User Details</span>
-          </div>
-          <div className="userLogbox"></div>
-        </div>
       </div>
     </div>
   );

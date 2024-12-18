@@ -36,7 +36,7 @@ function GoogleLoginButton() {
       if (profileResponse.data.bio === null) {
         navigate("/edit_profile?signup=True");
       } else {
-        navigate("/homeposts");
+        navigate("/home");
       }
     } catch (error) {
       console.error("Login Error:", error);

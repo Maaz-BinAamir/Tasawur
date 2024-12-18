@@ -46,4 +46,15 @@ class PostLikes(models.Model):
 class CommentLikes(models.Model):
     comment_id = models.ForeignKey(Comments, on_delete=models.CASCADE, related_name='comment_likes')
     user_id = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name='liked_comments')
+
+class Category(models.Model):
+    id = models.AutoField(primary_key=True)
+    name = models.CharField(max_length=1024)
+
+class UserPreferences(models.Model):
+    user_id = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name='preferences')
+    category_id = models.ForeignKey(Category, on_delete=models.CASCADE, related_name='users')
     
+class PostCategories(models.Model):
+    post_id = models.ForeignKey(Posts, on_delete=models.CASCADE, related_name='categories')
+    category_id = models.ForeignKey(Category, on_delete=models.CASCADE, related_name='posts')

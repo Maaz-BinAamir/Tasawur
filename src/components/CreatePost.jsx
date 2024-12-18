@@ -3,11 +3,12 @@ import axios from "axios";
 import z from "zod";
 import NavBar from "./NavBar";
 import "../style/CreatePost.css";
+import { useNavigate } from "react-router-dom";
 
 const createPostSchema = z.object({
   image: z.instanceof(File, "An image is required"),
   description: z.string().min(1, "Description is a required field"),
-  categories: z.array(z.string()).min(1, "Please select at least one category"),
+  categories: z.array(z.number()).min(1, "Please select at least one category"),
   agreeToTerms: z.boolean().refine((val) => val, {
     message: "You must agree to the terms before creating a post",
   }),
@@ -22,15 +23,17 @@ export default function CreatePost() {
   const [isLoading, setIsLoading] = useState(false);
   const [errors, setErrors] = useState({});
 
+  const navigate = useNavigate();
+
   const categoryOptions = [
-    "Sketching",
-    "Painting",
-    "Digital Art",
-    "Journaling",
-    "Photography",
-    "Doodling",
-    "Sculpting",
-    "Crocheting",
+    { id: 1, name: "Sketching" },
+    { id: 2, name: "Painting" },
+    { id: 3, name: "Digital Art" },
+    { id: 4, name: "Journaling" },
+    { id: 5, name: "Photography" },
+    { id: 6, name: "Doodling" },
+    { id: 7, name: "Sculpting" },
+    { id: 8, name: "Crocheting" },
   ];
 
   const handleSubmit = useCallback(
@@ -47,12 +50,12 @@ export default function CreatePost() {
           agreeToTerms,
         };
 
-        createPostSchema.parse(formData); // Validate using Zod
+        createPostSchema.parse(formData);
 
         const formDataToSend = new FormData();
         formDataToSend.append("image", image);
         formDataToSend.append("description", description);
-        formDataToSend.append("categories", JSON.stringify(categories));
+        formDataToSend.append("categories", categories);
 
         const authToken = JSON.parse(localStorage.getItem("authToken"));
 
@@ -74,6 +77,7 @@ export default function CreatePost() {
         setAgreeToTerms(false);
 
         alert("Post created successfully!");
+        navigate("/home");
       } catch (error) {
         if (error instanceof z.ZodError) {
           const fieldErrors = error.errors.reduce((acc, err) => {
@@ -88,7 +92,7 @@ export default function CreatePost() {
         setIsLoading(false);
       }
     },
-    [image, description, categories, agreeToTerms]
+    [image, description, categories, agreeToTerms, navigate]
   );
 
   const handleImageChange = (e) => {
@@ -143,23 +147,28 @@ export default function CreatePost() {
             <label className="category-label">Categories</label>
             <div className="categories">
               {categoryOptions.map((category) => (
-                <div key={category}>
+                <div key={category.id}>
                   <input
                     type="checkbox"
-                    id={category}
-                    value={category}
-                    checked={categories.includes(category)}
+                    id={category.id}
+                    value={category.id}
+                    checked={categories.includes(category.id)}
                     onChange={(e) => {
-                      if (categories.includes(e.target.value)) {
+                      if (categories.includes(parseInt(e.target.value))) {
                         setCategories(
-                          categories.filter((c) => c !== e.target.value)
+                          categories.filter(
+                            (c) => c !== parseInt(e.target.value)
+                          )
                         );
                       } else {
-                        setCategories([...categories, e.target.value]);
+                        setCategories([
+                          ...categories,
+                          parseInt(e.target.value),
+                        ]);
                       }
                     }}
                   />
-                  <label htmlFor={category}>{category}</label>
+                  <label htmlFor={category.id}>{category.name}</label>
                 </div>
               ))}
             </div>

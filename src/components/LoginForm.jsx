@@ -54,7 +54,7 @@ function LoginForm() {
       if (profileResponse.data.bio === null) {
         navigate("/edit_profile?signup=True");
       } else {
-        navigate("/homeposts");
+        navigate("/home");
       }
     } catch (error) {
       if (error.response) {
