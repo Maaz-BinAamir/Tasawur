@@ -2,6 +2,7 @@ import "../style/NavBar.css";
 import "@fortawesome/fontawesome-free/css/all.min.css";
 import { useNavigate } from "react-router-dom";
 import SearchBar from "./SearchBar";
+import axios from "axios";
 
 function NavBar() {
   const navigate = useNavigate();
@@ -15,11 +16,31 @@ function NavBar() {
   };
 
   const openHome = () => {
-    navigate(`/home`);
+    navigate(`/`);
   };
 
   const openChatApp = () => {
     navigate(`/chat`);
+  };
+
+  const logoutUser = async () => {
+    const authToken = JSON.parse(localStorage.getItem("authToken")) || {};
+    try {
+      await axios.post(
+        "http://127.0.0.1:8000/api/logout/",
+        {},
+        {
+          headers: {
+            Authorization: `Bearer ${authToken.access}`,
+          },
+        }
+      );
+      localStorage.removeItem("authToken");
+      localStorage.removeItem("userID");
+      navigate(`/login`);
+    } catch (error) {
+      console.error("Error logging out:", error);
+    }
   };
 
   return (
@@ -38,18 +59,21 @@ function NavBar() {
 
       {/* Icons Section */}
       <div className="links">
-        <a href="#" className="icon" onClick={openCreatePost}>
+        <button className="icon" onClick={openCreatePost}>
           <i className="fas fa-plus"></i>
-        </a>
-        <a href="#" className="icon" onClick={openHome}>
+        </button>
+        <button className="icon" onClick={openHome}>
           <i className="fas fa-home"></i>
-        </a>
-        <a href="#" className="icon" onClick={openChatApp}>
+        </button>
+        <button className="icon" onClick={openChatApp}>
           <i className="fas fa-comment-dots"></i>
-        </a>
-        <a href="#" className="icon" onClick={openProfile}>
+        </button>
+        <button className="icon" onClick={openProfile}>
           <i className="fas fa-user"></i>
-        </a>
+        </button>
+        <button className="icon" onClick={logoutUser}>
+          <i className="fas fa-sign-out-alt"></i>
+        </button>
       </div>
     </nav>
   );

@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import axios from "axios";
 import { useNavigate, useParams } from "react-router-dom";
 import NavBar from "./NavBar.jsx";
+import Loader from "./Utility/Loader.jsx";
 import "../style/Profile.css";
 
 function Profile() {
@@ -86,104 +87,109 @@ function Profile() {
     navigate(`/post/${postId}`);
   };
 
-  if (loading) return <div className="loading">Loading...</div>;
 
   return (
     <>
       <NavBar />
-      <div className="profile-container">
-        <div className="profile-header">
-          <img
-            src={user.profile_pic}
-            alt="Profile"
-            className="profile-picture"
-          />
+      {loading && <Loader />}
+      {!loading && (
+        <div className="profile-container">
+          <div className="profile-header">
+            <img
+              src={user.profile_pic}
+              alt="Profile"
+              className="profile-picture"
+            />
 
-          <div className="profile-details">
-            <h1 className="profile-username">{user.username}</h1>
+            <div className="profile-details">
+              <h1 className="profile-username">{user.username}</h1>
 
-            <div className="profile-stats">
-              <span>{user.posts.length} posts</span>
-              <span>{followers} followers</span>
-              <span>{user.following} following</span>
-            </div>
+              <div className="profile-stats">
+                <span>{user.posts.length} posts</span>
+                <span>{followers} followers</span>
+                <span>{user.following} following</span>
+              </div>
 
-            <p className="profile-bio">{user.bio}</p>
+              <p className="profile-bio">{user.bio}</p>
 
-            <div className="profile-actions">
-              {id && (
-                <button onClick={handleFollow} className="profile-btn edit-btn">
-                  {follow ? "Unfollow" : "Follow"}
-                </button>
-              )}
-              {!id && (
-                <button
-                  onClick={openEditProfile}
-                  className="profile-btn edit-btn"
-                >
-                  Edit Profile
-                </button>
-              )}
-              <button
-                onClick={openSharePopup}
-                className="profile-btn share-btn"
-              >
-                Share Profile
-              </button>
-            </div>
-          </div>
-
-          {showPopup && (
-            <div className="popup-overlay">
-              <div className="popup-container">
-                <button
-                  onClick={() => setShowPopup(false)}
-                  className="popup-close"
-                >
-                  &times;
-                </button>
-                <h2 className="popup-title">Share Your Profile</h2>
-                <div className="popup-content">
-                  <input
-                    type="text"
-                    value={window.location.href}
-                    readOnly
-                    className="popup-input"
-                  />
-                  <button onClick={handleCopy} className="popup-copy-btn">
-                    {copied ? "Copied!" : "Copy Link"}
+              <div className="profile-actions">
+                {id && (
+                  <button
+                    onClick={handleFollow}
+                    className="profile-btn edit-btn"
+                  >
+                    {follow ? "Unfollow" : "Follow"}
                   </button>
-                </div>
+                )}
+                {!id && (
+                  <button
+                    onClick={openEditProfile}
+                    className="profile-btn edit-btn"
+                  >
+                    Edit Profile
+                  </button>
+                )}
+                <button
+                  onClick={openSharePopup}
+                  className="profile-btn share-btn"
+                >
+                  Share Profile
+                </button>
               </div>
             </div>
-          )}
-        </div>
 
-        <div className="posts-section">
-          {user.posts.length > 0 ? (
-            <div className="posts-grid">
-              {user.posts.map((post) => (
-                <div
-                  key={post.id}
-                  className="post-item"
-                  onClick={() => openPost(post.id)}
-                >
-                  <img
-                    src={post.image}
-                    alt={post.description}
-                    className="post-image-profile"
-                  />
-                  <div className="post-overlay">
-                    <p className="post-description">{post.description}</p>
+            {showPopup && (
+              <div className="popup-overlay">
+                <div className="popup-container">
+                  <button
+                    onClick={() => setShowPopup(false)}
+                    className="popup-close"
+                  >
+                    &times;
+                  </button>
+                  <h2 className="popup-title">Share Your Profile</h2>
+                  <div className="popup-content">
+                    <input
+                      type="text"
+                      value={window.location.href}
+                      readOnly
+                      className="popup-input"
+                    />
+                    <button onClick={handleCopy} className="popup-copy-btn">
+                      {copied ? "Copied!" : "Copy Link"}
+                    </button>
                   </div>
                 </div>
-              ))}
-            </div>
-          ) : (
-            <p className="no-posts">No posts available.</p>
-          )}
+              </div>
+            )}
+          </div>
+
+          <div className="posts-section">
+            {user.posts.length > 0 ? (
+              <div className="posts-grid">
+                {user.posts.map((post) => (
+                  <div
+                    key={post.id}
+                    className="post-item"
+                    onClick={() => openPost(post.id)}
+                  >
+                    <img
+                      src={post.image}
+                      alt={post.description}
+                      className="post-image-profile"
+                    />
+                    <div className="post-overlay">
+                      <p className="post-description">{post.description}</p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <p className="no-posts">No posts available.</p>
+            )}
+          </div>
         </div>
-      </div>
+      )}
     </>
   );
 }

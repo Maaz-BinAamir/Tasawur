@@ -1,5 +1,5 @@
 from supabase import create_client, Client
-from api.models import Category, CustomUser, Follower_Following, PostCategories, Posts, Comments, PostLikes, CommentLikes, UserPreferences
+from api.models import Category, CustomUser, Follower_Following, PostCategories, Posts, Comments, PostLikes, CommentLikes, UserPreferences, logs
 from django.db import models
 from .serializers import CategoriesSerializer, PostsSerializer, PreferencesSerializer, UserSerializer, CommentsSerializer, CommentSaveSerializer
 from django.contrib.auth import authenticate
@@ -40,6 +40,8 @@ def login_user(request):
 
     user = authenticate(username=username, password=password)
     
+    logs.objects.create(user_id=user, action="User logged in")
+    
     if user is not None:
         refresh = RefreshToken.for_user(user)
         return Response({
@@ -76,6 +78,8 @@ def google_login(request):
             }
         )
 
+        logs.objects.create(user_id=user, action="User logged in")
+        
         # Generate JWT tokens
         refresh = RefreshToken.for_user(user)
         return Response({
@@ -86,6 +90,12 @@ def google_login(request):
     except ValueError:
         return Response({'error': 'Invalid token.'}, status=status.HTTP_400_BAD_REQUEST)
         
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+def logout_user(request):
+    logs.objects.create(user_id=request.user, action="User logged out")
+    return Response({'message': 'User logged out successfully.'}, status=status.HTTP_200_OK)
+
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
 def user_profile(request):
@@ -193,7 +203,9 @@ def update_user(request):
                 continue
             preference = Category.objects.get(id=preference_id)
             UserPreferences.objects.get_or_create(user_id=user, category_id=preference)
-                
+        
+        logs.objects.create(user_id=user, action="User updated profile")
+        
         return Response(serializer.data, status=status.HTTP_200_OK)
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
@@ -243,6 +255,8 @@ def create_posts(request):
                 category = Category.objects.get(id=category_id)
                 PostCategories.objects.create(post_id=post, category_id=category)
                 
+            logs.objects.create(user_id=request.user, action=f"User created post(id:{post.id})")
+                
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         print(serializer.errors)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
@@ -269,6 +283,7 @@ def update_posts(request, post_id):
 @api_view(['DELETE'])
 @permission_classes([IsAuthenticated])
 def delete_post(request, post_id):
+    user = CustomUser.objects.get(id=request.user.id)
     try:
         post = Posts.objects.get(id=post_id)
     except Posts.DoesNotExist:
@@ -281,6 +296,9 @@ def delete_post(request, post_id):
         return Response({'error': 'Failed to delete image from Supabase.'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
     
     post.delete()
+    
+    logs.objects.create(user_id=user, action=f"User deleted post(id:{post_id})")
+    
     return Response({'message': 'Post deleted successfully.'}, status=status.HTTP_204_NO_CONTENT)
 
 @api_view(['GET'])
@@ -369,15 +387,19 @@ def home_posts(request):
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
 def create_comment(request, post_id):
+    post = Posts.objects.get(id=post_id)
+    user = CustomUser.objects.get(id=request.user.id)
+    
     data = {
-        "post_id": post_id,
-        "user_id": request.user.id,
+        "post_id": post.id,
         "content": request.data.get("content"),
     }
     
-    serializer = CommentSaveSerializer(data=data)
+    serializer = CommentSaveSerializer(data=data, context={"request": request})
     if serializer.is_valid():
-        serializer.save()
+        serializer.save(user_id=user)
+        logs.objects.create(user_id=user, action=f"User commented on post(id:{post_id})")
+        
         return Response(serializer.data, status=status.HTTP_201_CREATED)
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
@@ -395,8 +417,14 @@ def like_post(request, post_id):
     user = CustomUser.objects.get(id=request.user.id)
     if (PostLikes.objects.filter(post_id=post, user_id=user).exists()):
         PostLikes.objects.filter(post_id=post, user_id=user).delete()
+        
+        logs.objects.create(user_id=user, action=f"User unliked post(id:{post_id})")
+        
         return Response({'message': 'Post unliked successfully.'}, status=status.HTTP_204_NO_CONTENT)
     PostLikes.objects.create(post_id=post, user_id=request.user)
+    
+    logs.objects.create(user_id=user, action=f"User liked post(id:{post_id})")
+    
     return Response({'message': 'Post liked successfully.'}, status=status.HTTP_201_CREATED)
     
 @api_view(['POST'])
@@ -406,7 +434,14 @@ def like_comment(request, comment_id):
     user = CustomUser.objects.get(id=request.user.id)
     if (CommentLikes.objects.filter(comment_id=comment, user_id=user).exists()):
         CommentLikes.objects.filter(comment_id=comment, user_id=user).delete()
+        
+        logs.objects.create(user_id=user, action=f"User unliked comment(id:{comment_id})")
+
+        return Response({'message': 'Comment unliked successfully.'}, status=status.HTTP_204_NO_CONTENT)        
     CommentLikes.objects.create(comment_id=comment, user_id=user)
+    
+    logs.objects.create(user_id=user, action=f"User liked comment(id:{comment_id})")
+    
     return Response({'message': 'Comment liked successfully.'}, status=status.HTTP_201_CREATED)
 
 @api_view(['POST'])
@@ -416,8 +451,14 @@ def follow_user(request, user_id):
     request_user = CustomUser.objects.get(id=request.user.id)
     if (Follower_Following.objects.filter(following=user, follower=request_user).exists()):
         Follower_Following.objects.filter(following=user, follower=request_user).delete()
+        
+        logs.objects.create(user_id=request_user, action=f"User unfollowed user(id:{user_id})")
+        
         return Response({'message': 'User unfollowed successfully.'}, status=status.HTTP_204_NO_CONTENT)
     Follower_Following.objects.create(following=user, follower=request_user)
+    
+    logs.objects.create(user_id=request_user, action=f"User followed user(id:{user_id})")
+    
     return Response({'message': 'User followed successfully.'}, status=status.HTTP_201_CREATED)
 
 @api_view(['GET'])

@@ -1,5 +1,6 @@
 import { useState, useEffect, useCallback, useRef } from "react";
 import "../style/HomePosts.css";
+import Loader from "./Utility/Loader.jsx";
 import NavBar from "./NavBar.jsx";
 import { useNavigate, useSearchParams, useLocation } from "react-router-dom";
 import axios from "axios";
@@ -20,7 +21,7 @@ function HomePosts() {
   const observer = useRef();
 
   // Check if we're on the home page
-  const isHomePage = location.pathname === "/home";
+  const isHomePage = location.pathname === "/";
 
   const fetchPosts = useCallback(async () => {
     // Prevent multiple simultaneous requests
@@ -28,6 +29,11 @@ function HomePosts() {
 
     setLoaded(false);
     const authToken = JSON.parse(localStorage.getItem("authToken"));
+
+    if (!authToken) {
+      navigate("/login");
+      return;
+    }
 
     const query = searchParams.get("q") || "";
     const category = searchParams.get("category") || "";
@@ -58,8 +64,23 @@ function HomePosts() {
       console.error("Error fetching posts:", error);
       setLoaded(true);
       setHasMore(false);
+
+      if (error.response) {
+        if (error.response.status === 401) {
+          console.error("Unauthorized: Please log in again.");
+          navigate("/login");
+        } else {
+          console.error(
+            "Error fetching posts:",
+            error.response.status,
+            error.response.data
+          );
+        }
+      } else {
+        console.error("Network or other error:", error.message);
+      }
     }
-  }, [page, searchParams, hasMore, isHomePage]);
+  }, [page, searchParams, hasMore, isHomePage, navigate]);
 
   // Reset page and posts when search params change
   useEffect(() => {
@@ -113,11 +134,7 @@ function HomePosts() {
       <NavBar />
 
       {/* Loading Spinner */}
-      {!loaded && posts.length === 0 && (
-        <div className="loader-container">
-          <div className="loader"></div>
-        </div>
-      )}
+      {!loaded && posts.length === 0 && <Loader />}
 
       {/* No Posts Found State */}
       {posts.length === 0 && loaded && (

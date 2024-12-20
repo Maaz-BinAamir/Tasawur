@@ -112,7 +112,7 @@ const EditProfile = () => {
 
       console.log("User updated successfully:", response.data);
       if (signup) {
-        navigate("/home");
+        navigate("/");
       } else {
         navigate("/profile");
       }

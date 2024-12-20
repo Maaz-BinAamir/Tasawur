@@ -10,6 +10,7 @@ function LoginForm() {
     password: "",
   });
   const [responseMessage, setResponseMessage] = useState("");
+  const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
   const handleChange = (e) => {
@@ -21,7 +22,7 @@ function LoginForm() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
+    setLoading(true);
     try {
       const response = await axios.post(
         "http://127.0.0.1:8000/api/login/",
@@ -54,9 +55,10 @@ function LoginForm() {
       if (profileResponse.data.bio === null) {
         navigate("/edit_profile?signup=True");
       } else {
-        navigate("/home");
+        navigate("/");
       }
     } catch (error) {
+      setLoading(false);
       if (error.response) {
         setResponseMessage(
           error.response.data.error || "An error occurred. Please try again."
@@ -96,7 +98,7 @@ function LoginForm() {
             <label>Password</label>
             <span></span>
           </div>
-          <input type="submit" value="Login" />
+          <input type="submit" value={loading ? "Logging In" : "Login"} />
           {responseMessage && (
             <p className="responseMessage">{responseMessage}</p>
           )}
@@ -110,9 +112,7 @@ function LoginForm() {
 
         <div className="Logsignup_link">
           Don&apos;t have an account?{" "}
-          <a href="#" onClick={() => navigate("/signup")}>
-            Sign Up
-          </a>
+          <a onClick={() => navigate("/signup")}>Sign Up</a>
         </div>
       </div>
 
@@ -121,7 +121,7 @@ function LoginForm() {
         <div className="Logbox-container">
           <div className="Logbox"></div>
           <div className="Logbox">
-            <span>Log In</span>
+            <span>Login</span>
           </div>
           <div className="Logbox"></div>
         </div>
