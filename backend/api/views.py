@@ -255,7 +255,7 @@ def create_posts(request):
                 category = Category.objects.get(id=category_id)
                 PostCategories.objects.create(post_id=post, category_id=category)
                 
-            logs.objects.create(user_id=request.user, action=f"User created post(id:{post.id})")
+            logs.objects.create(user_id=request.user, action=f"User created post (id:{post.id})")
                 
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         print(serializer.errors)
@@ -297,7 +297,7 @@ def delete_post(request, post_id):
     
     post.delete()
     
-    logs.objects.create(user_id=user, action=f"User deleted post(id:{post_id})")
+    logs.objects.create(user_id=user, action=f"User deleted post (id:{post_id})")
     
     return Response({'message': 'Post deleted successfully.'}, status=status.HTTP_204_NO_CONTENT)
 
@@ -398,7 +398,7 @@ def create_comment(request, post_id):
     serializer = CommentSaveSerializer(data=data, context={"request": request})
     if serializer.is_valid():
         serializer.save(user_id=user)
-        logs.objects.create(user_id=user, action=f"User commented on post(id:{post_id})")
+        logs.objects.create(user_id=user, action=f"User commented on post (id:{post_id})")
         
         return Response(serializer.data, status=status.HTTP_201_CREATED)
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
@@ -418,12 +418,12 @@ def like_post(request, post_id):
     if (PostLikes.objects.filter(post_id=post, user_id=user).exists()):
         PostLikes.objects.filter(post_id=post, user_id=user).delete()
         
-        logs.objects.create(user_id=user, action=f"User unliked post(id:{post_id})")
+        logs.objects.create(user_id=user, action=f"User unliked post (id:{post_id})")
         
         return Response({'message': 'Post unliked successfully.'}, status=status.HTTP_204_NO_CONTENT)
     PostLikes.objects.create(post_id=post, user_id=request.user)
     
-    logs.objects.create(user_id=user, action=f"User liked post(id:{post_id})")
+    logs.objects.create(user_id=user, action=f"User liked post (id:{post_id})")
     
     return Response({'message': 'Post liked successfully.'}, status=status.HTTP_201_CREATED)
     
@@ -435,12 +435,12 @@ def like_comment(request, comment_id):
     if (CommentLikes.objects.filter(comment_id=comment, user_id=user).exists()):
         CommentLikes.objects.filter(comment_id=comment, user_id=user).delete()
         
-        logs.objects.create(user_id=user, action=f"User unliked comment(id:{comment_id})")
+        logs.objects.create(user_id=user, action=f"User unliked comment (id:{comment_id})")
 
         return Response({'message': 'Comment unliked successfully.'}, status=status.HTTP_204_NO_CONTENT)        
     CommentLikes.objects.create(comment_id=comment, user_id=user)
     
-    logs.objects.create(user_id=user, action=f"User liked comment(id:{comment_id})")
+    logs.objects.create(user_id=user, action=f"User liked comment (id:{comment_id})")
     
     return Response({'message': 'Comment liked successfully.'}, status=status.HTTP_201_CREATED)
 
@@ -452,12 +452,12 @@ def follow_user(request, user_id):
     if (Follower_Following.objects.filter(following=user, follower=request_user).exists()):
         Follower_Following.objects.filter(following=user, follower=request_user).delete()
         
-        logs.objects.create(user_id=request_user, action=f"User unfollowed user(id:{user_id})")
+        logs.objects.create(user_id=request_user, action=f"User unfollowed user (id:{user_id})")
         
         return Response({'message': 'User unfollowed successfully.'}, status=status.HTTP_204_NO_CONTENT)
     Follower_Following.objects.create(following=user, follower=request_user)
     
-    logs.objects.create(user_id=request_user, action=f"User followed user(id:{user_id})")
+    logs.objects.create(user_id=request_user, action=f"User followed user (id:{user_id})")
     
     return Response({'message': 'User followed successfully.'}, status=status.HTTP_201_CREATED)
 
