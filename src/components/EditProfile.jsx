@@ -221,6 +221,18 @@ const EditProfile = () => {
           <button className="sub">Submit</button>
         </form>
       </div>
+      {/* Right panel */}
+<div className="userpanel userinfo-panel">
+  <div className="userLogbox-container">
+    <div className="userLogbox"></div>
+
+    <div className="userLogbox">
+      <span>User Details</span>
+    </div>
+
+    <div className="userLogbox"></div>
+  </div>
+</div>
     </div>
   );
 };

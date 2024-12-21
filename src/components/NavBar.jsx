@@ -2,6 +2,8 @@ import "../style/NavBar.css";
 import "@fortawesome/fontawesome-free/css/all.min.css";
 import { useNavigate } from "react-router-dom";
 import SearchBar from "./SearchBar";
+import logo from "../images/logo.png";
+
 
 function NavBar() {
   const navigate = useNavigate();
@@ -24,12 +26,10 @@ function NavBar() {
 
   return (
     <nav className="NavBar">
-      {/* Logo Section */}
-      <div className="logo" onClick={openHome}>
-        <a href="#" className="logo-img">
-          <i className="fas fa-palette"></i>
-        </a>
-      </div>
+     {/* Logo Section */}
+  <div className="logo" onClick={openHome}>
+    <img className="logo-img" src={logo} alt="Description" />
+  </div>
 
       {/* Search Bar Section */}
       <div className="search-wrapper">

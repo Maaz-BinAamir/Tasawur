@@ -11,14 +11,14 @@ const SearchBar = () => {
   const navigate = useNavigate();
 
   const categories = [
-    "Sketching",
-    "Painting",
-    "Digital Art",
-    "Journaling",
-    "Photography",
-    "Doodling",
-    "Sculpting",
-    "Crocheting",
+    { name: "Sketching", icon: "fa-pencil" },
+    { name: "Painting", icon: "fa-palette" },
+    { name: "Digital Art", icon: "fa-desktop" },
+    { name: "Journaling", icon: "fa-book" },
+    { name: "Photography", icon: "fa-camera" },
+    { name: "Doodling", icon: "fa-smile" },
+    { name: "Sculpting", icon: "fa-screwdriver" },
+    { name: "Crocheting", icon: "fa-mitten" },
   ];
 
   useEffect(() => {
@@ -45,17 +45,10 @@ const SearchBar = () => {
     if (query && !previousSearches.includes(query)) {
       const updatedSearches = [query, ...previousSearches].slice(0, 5);
       setPreviousSearches(updatedSearches);
-      sessionStorage.setItem(
-        "previousSearches",
-        JSON.stringify(updatedSearches)
-      );
+      sessionStorage.setItem("previousSearches", JSON.stringify(updatedSearches));
     }
 
     navigate(`/search?q=${encodeURIComponent(query)}&category=${category}`);
-
-    // window.location.href = `/search?q=${encodeURIComponent(
-    //   query
-    // )}&category=${category}`;
 
     setSearchTerm("");
     setSelectedCategory("");
@@ -80,10 +73,7 @@ const SearchBar = () => {
           onKeyDown={(e) => e.key === "Enter" && handleSearch(searchTerm)}
         />
 
-        <button
-          onClick={() => handleSearch(searchTerm)}
-          className="search-button"
-        >
+        <button onClick={() => handleSearch(searchTerm)} className="search-button">
           <i className="fas fa-search"></i>
         </button>
       </div>
@@ -110,14 +100,15 @@ const SearchBar = () => {
             <div className="categories-grid">
               {categories.map((category, index) => (
                 <div
-                  key={category}
+                  key={category.name}
                   onClick={() => {
-                    setSelectedCategory(category);
+                    setSelectedCategory(category.name);
                     handleSearch(searchTerm, index + 1);
                   }}
                   className="category-item"
                 >
-                  {category}
+                 <a href="#" className="searchIcon"> <i className={`fa-solid ${category.icon}`}></i> </a>{category.name}
+                 
                 </div>
               ))}
             </div>

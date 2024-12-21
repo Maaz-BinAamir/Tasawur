@@ -2,19 +2,36 @@ nav {
   display: flex;
   align-items: center;
   padding: 10px 20px;
-  background-color: #ffff;
+  background-color: #fff;
+  position: fixed; /* Make the navbar fixed */
+  top: 0;
   left: 0;
   right: 0;
+  z-index: 1000; /* Ensure it stays above other content */
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
   justify-content: space-between;
 }
 
-.logo-img {
-  height: 40px;
-  cursor: pointer;
+
+.logo {
   display: flex;
   align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  background-color: #fff; 
+  border-radius: 50%; 
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1); 
+  width: 60px; 
+  height: 60px; 
 }
+
+.logo-img {
+  height: 60px; 
+  width: 60px;
+  border-radius: 50%; 
+  object-fit: cover; 
+}
+
 
 .search-wrapper {
   flex-grow: 1;
