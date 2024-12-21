@@ -7,7 +7,7 @@ import { useParams, useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
 import "../style/Posts.css";
 import { Heart, MessageCircle, MoreVertical } from "lucide-react";
-import { formatDistanceToNow, set } from "date-fns";
+import { formatDistanceToNow } from "date-fns";
 
 function Post() {
   const { postID } = useParams();
