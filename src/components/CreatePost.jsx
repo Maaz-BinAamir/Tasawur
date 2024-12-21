@@ -77,7 +77,7 @@ export default function CreatePost() {
         setAgreeToTerms(false);
 
         alert("Post created successfully!");
-        navigate("/home");
+        navigate("/");
       } catch (error) {
         if (error instanceof z.ZodError) {
           const fieldErrors = error.errors.reduce((acc, err) => {

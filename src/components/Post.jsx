@@ -2,10 +2,12 @@ import "../App.css";
 import NavBar from "./NavBar.jsx";
 import axios from "axios";
 import Comments from "./Comments.jsx";
+import Loader from "./Utility/Loader.jsx";
 import { useParams, useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
 import "../style/Posts.css";
 import { Heart, MessageCircle, MoreVertical } from "lucide-react";
+import { formatDistanceToNow } from "date-fns";
 
 function Post() {
   const { postID } = useParams();
@@ -62,7 +64,7 @@ function Post() {
         },
       });
 
-      navigate("/home");
+      navigate("/");
     } catch (error) {
       console.error("Error deleting post:", error);
     }
@@ -110,12 +112,12 @@ function Post() {
     navigate(`/profile/${id}`);
   };
 
-  if (loading) return <div className="loading-container">Loading...</div>;
-
   return (
     <>
       <NavBar />
-      {post && (
+
+      {loading && <Loader />}
+      {!loading && post && (
         <div className="post-detail-container">
           <div className="post-detail-wrapper">
             <div className="post-header">
@@ -150,7 +152,6 @@ function Post() {
                   </div>
                 )}
               </div>
-              <span className="post-timestamp">{post.createdAt}</span>
             </div>
 
             <div className="post-image-container">
@@ -181,7 +182,11 @@ function Post() {
               </div>
 
               <div className="post-description-text">{post.description}</div>
-
+              <span className="post-timestamp">
+                {formatDistanceToNow(new Date(post.time_created), {
+                  addSuffix: true,
+                })}
+              </span>
               {showPopup && (
                 <div className="popup-overlay">
                   <div className="popup-container">

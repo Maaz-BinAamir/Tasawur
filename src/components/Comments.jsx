@@ -1,13 +1,14 @@
 import "../style/Comments.css";
 import { useState, useEffect, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
+import { formatDistanceToNow } from "date-fns";
 import axios from "axios";
 
 const apiUrl = "http://localhost:8000/api";
 
 function OneComment({ comment, onLike }) {
   const { id, user_id, content, likes, time_created, liked } = comment;
-  const [currentLikes, setCurrentLikes] = useState(likes);
+  const [currentLikes, setCurrentLikes] = useState(parseInt(likes));
   const [hasLiked, setHasLiked] = useState(liked);
 
   const navigate = useNavigate();
@@ -51,7 +52,7 @@ function OneComment({ comment, onLike }) {
           <div className="comment-header">
             <strong className="comment-username">{user_id.username}</strong>
             <span className="comment-timestamp">
-              {new Date(time_created).toLocaleString()}
+              {formatDistanceToNow(new Date(time_created), { addSuffix: true })}
             </span>
           </div>
           <p className="comment-text">{content}</p>
@@ -89,6 +90,7 @@ function MakeComment({ onAddComment, postID }) {
         }
       );
       onAddComment(response.data);
+      console.log(response.data);
       setText("");
     } catch (error) {
       console.error("Error creating comment:", error);

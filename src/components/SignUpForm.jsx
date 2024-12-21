@@ -19,6 +19,7 @@ function SignUpForm() {
   const [errors, setErrors] = useState({});
   const navigate = useNavigate();
   const [isExpanded, setIsExpanded] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   function handleChange(e) {
     setFormData({
@@ -27,12 +28,28 @@ function SignUpForm() {
     });
   }
 
-  async function handleSubmit(e) {
-    e.preventDefault();
-    console.log(JSON.stringify(formData));
+  const validateForm = () => {
     try {
       signUpSchema.parse(formData);
       setErrors({});
+      return true; // Form is valid
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        const fieldErrors = error.errors.reduce((acc, err) => {
+          acc[err.path[0]] = err.message;
+          return acc;
+        }, {});
+        setErrors(fieldErrors);
+      }
+      return false; // Form is invalid
+    }
+  };
+
+  async function handleSubmit(e) {
+    e.preventDefault();
+    if (!validateForm()) return; // Don't submit if the form is invalid
+    setLoading(true);
+    try {
       const response = await fetch("http://127.0.0.1:8000/api/signup/", {
         method: "POST",
         headers: {
@@ -42,17 +59,11 @@ function SignUpForm() {
       });
       const data = await response.json();
       console.log(data);
-      navigate("/");
+      navigate("/login");
     } catch (error) {
-      if (error instanceof z.ZodError) {
-        const fieldErrors = error.errors.reduce((acc, err) => {
-          acc[err.path[0]] = err.message;
-          return acc;
-        }, {});
-        setErrors(fieldErrors);
-      } else {
-        console.error("Error:", error);
-      }
+      console.error("Error:", error);
+    } finally {
+      setLoading(false);
     }
   }
 
@@ -62,80 +73,78 @@ function SignUpForm() {
 
   return (
     <div className="wrapper">
-    <div className={`login-text ${isExpanded ? "expand" : ""}`}>
-      <button className="cta" onClick={toggleLogin}>
-        <i
-          className={`fas fa-chevron-${isExpanded ? "up" : "down"} fa-1x`}
-        ></i>
-      </button>
-      <div className={`text ${isExpanded ? "show-hide" : ""}`}>
-        <form onSubmit={handleSubmit}>
+      <div className={`login-text ${isExpanded ? "expand" : ""}`}>
+        <button className="cta" onClick={toggleLogin}>
+          <i
+            className={`fas fa-chevron-${isExpanded ? "up" : "down"} fa-1x`}
+          ></i>
+        </button>
+        <div className={`text ${isExpanded ? "show-hide" : ""}`}>
+          <form onSubmit={handleSubmit}>
             <h1>Sign Up</h1>
-          <div className="input-group">
-                <input
-                  id="username"
-                  type="text"
-                  placeholder= "Username"
-                  name="username"
-              value={formData.username}
-              onChange={handleChange}
-                  className="input-field"
-                  style={{ color: "black" }}
-                />
-               {errors.username && <p className="error">{errors.username}</p>}
+            <div className="input-group">
+              <input
+                id="username"
+                type="text"
+                placeholder="Username"
+                name="username"
+                value={formData.username}
+                onChange={handleChange}
+                className="input-field"
+                style={{ color: "black" }}
+              />
+              {errors.username && <p className="error">{errors.username}</p>}
+            </div>
 
-              </div>
+            <div className="input-group">
+              <input
+                id="email"
+                type="email"
+                placeholder="Email"
+                name="email"
+                value={formData.email}
+                onChange={handleChange}
+                className="input-field"
+                style={{ color: "black" }}
+              />
+              {errors.email && <p className="error">{errors.email}</p>}
+            </div>
 
-              <div className="input-group">
-                <input
-                    id="email"
-                  type="email"
-                  placeholder="Email"
-                  name="email"
-                  value={formData.email}
-                  onChange={handleChange}
-                  className="input-field"
-                  style={{ color: "black" }}
-                />
-                 {errors.email && <p className="error">{errors.email}</p>}
-
-              </div>
-
-              <div className="input-group">
-                <input
-                    id="password"
-                  type="password"
-                  name="password"
-                  placeholder="Password"
-                  style={{ color: "black" }}
-                  value={formData.password}
-                  onChange={handleChange}
-                  className="input-field"
-                />
-            {errors.password && <p className="error">{errors.password}</p>}
-              </div>
-          
-        </form>
-        <div className="Logsignup_link">
-          Already have an account?{" "}
-          <a href="#" onClick={() => navigate("/")}>
-            Login
-          </a>
+            <div className="input-group">
+              <input
+                id="password"
+                type="password"
+                name="password"
+                placeholder="Password"
+                style={{ color: "black" }}
+                value={formData.password}
+                onChange={handleChange}
+                className="input-field"
+              />
+              {errors.password && <p className="error">{errors.password}</p>}
+            </div>
+          </form>
+          <div className="Logsignup_link">
+            Already have an account? <a onClick={() => navigate("/")}>Login</a>
+          </div>
         </div>
       </div>
-      </div>
       <div className="call-text">
-  <h1>
-    Show us your <span>creative</span> side
-  </h1>
-  <div className="SignButt">
-  <form onSubmit={handleSubmit}>
-    <input type="submit" value="Sign Up" />
-  </form>
-  </div>
-</div>
+        <h1>
+          Show us your <span>creative</span> side
+        </h1>
+        <div className="SignButt">
+          <form onSubmit={handleSubmit}>
+            <input
+              type="submit"
+              onClick={handleSubmit}
+              disabled={loading}
+              value={loading ? "Signing up..." : "Sign up"}
+            />
+          </form>
+        </div>
       </div>
-
+    </div>
   );
 }
 
