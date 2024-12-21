@@ -49,6 +49,10 @@ function Profile() {
     navigate(`/edit_profile`);
   };
 
+  const openSavedPosts = () => {
+    navigate(`/saved_posts`);
+  };
+
   const handleFollow = async () => {
     try {
       const authToken = JSON.parse(localStorage.getItem("authToken")) || {};
@@ -87,7 +91,6 @@ function Profile() {
     navigate(`/post/${postId}`);
   };
 
-
   return (
     <>
       <NavBar />
@@ -122,12 +125,20 @@ function Profile() {
                   </button>
                 )}
                 {!id && (
-                  <button
-                    onClick={openEditProfile}
-                    className="profile-btn edit-btn"
-                  >
-                    Edit Profile
-                  </button>
+                  <>
+                    <button
+                      onClick={openEditProfile}
+                      className="profile-btn edit-btn"
+                    >
+                      Edit Profile
+                    </button>
+                    <button
+                      onClick={openSavedPosts}
+                      className="profile-btn edit-btn"
+                    >
+                      Saved Posts
+                    </button>
+                  </>
                 )}
                 <button
                   onClick={openSharePopup}

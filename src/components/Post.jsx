@@ -7,15 +7,16 @@ import { useParams, useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
 import "../style/Posts.css";
 import { Heart, MessageCircle, MoreVertical } from "lucide-react";
-import { formatDistanceToNow } from "date-fns";
+import { formatDistanceToNow, set } from "date-fns";
 
 function Post() {
   const { postID } = useParams();
 
-  const [isUsername, setIsUsername] = useState("");
+  const [isAuthor, setIsAuthor] = useState("");
   const [post, setPost] = useState(null);
   const [currentLikes, setCurrentLikes] = useState(0);
   const [hasLiked, setHasLiked] = useState(false);
+  const [hasSaved, setHasSaved] = useState(false);
   const [loading, setLoading] = useState(true);
   const [showPopup, setShowPopup] = useState(false);
   const [copied, setCopied] = useState(false);
@@ -41,7 +42,8 @@ function Post() {
         setPost(response.data);
         setCurrentLikes(response.data.likes);
         setHasLiked(response.data.hasLiked);
-        setIsUsername(response.data.isAuthor);
+        setIsAuthor(response.data.isAuthor);
+        setHasSaved(response.data.hasSaved);
         setLoading(false);
       } catch (error) {
         console.error("Error fetching post:", error);
@@ -67,6 +69,27 @@ function Post() {
       navigate("/");
     } catch (error) {
       console.error("Error deleting post:", error);
+    }
+  };
+
+  const handleSave = async () => {
+    try {
+      setDropdownVisible(false);
+
+      const authToken = JSON.parse(localStorage.getItem("authToken")) || {};
+
+      await axios.post(
+        `http://127.0.0.1:8000/api/posts/${postID}/save/`,
+        {},
+        {
+          headers: {
+            Authorization: `Bearer ${authToken.access}`,
+          },
+        }
+      );
+      setHasSaved((saved) => !saved);
+    } catch (error) {
+      console.error("Error saving/unsaving post:", error);
     }
   };
 
@@ -135,20 +158,27 @@ function Post() {
                 </strong>
               </div>
               <div className="post-options-container">
-                {isUsername && (
-                  <button
-                    className="options-btn"
-                    onClick={toggleDropdown}
-                    aria-label="Post Options"
-                  >
-                    <MoreVertical size={20} />
-                  </button>
-                )}
+                <button
+                  className="options-btn"
+                  onClick={toggleDropdown}
+                  aria-label="Post Options"
+                >
+                  <MoreVertical size={20} />
+                </button>
+
                 {dropdownVisible && (
                   <div className="dropdown-menu">
-                    <button className="dropdown-option" onClick={handleDelete}>
-                      Delete Post
+                    <button className="dropdown-option" onClick={handleSave}>
+                      {hasSaved ? "Unsave Post" : "Save Post"}
                     </button>
+                    {isAuthor && (
+                      <button
+                        className="dropdown-option"
+                        onClick={handleDelete}
+                      >
+                        Delete Post
+                      </button>
+                    )}
                   </div>
                 )}
               </div>

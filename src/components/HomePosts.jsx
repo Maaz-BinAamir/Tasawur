@@ -20,12 +20,12 @@ function HomePosts() {
   // Infinite scroll observer
   const observer = useRef();
 
-  // Check if we're on the home page
+  // Check if we're on the home page or saved posts page
   const isHomePage = location.pathname === "/";
+  const isSavedPostsPage = location.pathname === "/saved_posts";
 
   const fetchPosts = useCallback(async () => {
-    // Prevent multiple simultaneous requests
-    if (!hasMore) return;
+    if (!hasMore && !isSavedPostsPage) return;
 
     setLoaded(false);
     const authToken = JSON.parse(localStorage.getItem("authToken"));
@@ -39,9 +39,11 @@ function HomePosts() {
     const category = searchParams.get("category") || "";
 
     try {
-      const url = `http://127.0.0.1:8000/api/homeposts/?page=${page}&q=${encodeURIComponent(
-        query
-      )}&category=${encodeURIComponent(category)}`;
+      const url = isHomePage
+        ? `http://127.0.0.1:8000/api/homeposts/?page=${page}&q=${encodeURIComponent(
+            query
+          )}&category=${encodeURIComponent(category)}`
+        : `http://127.0.0.1:8000/api/saved_posts/`;
 
       const response = await axios.get(url, {
         headers: {
@@ -80,14 +82,14 @@ function HomePosts() {
         console.error("Network or other error:", error.message);
       }
     }
-  }, [page, searchParams, hasMore, isHomePage, navigate]);
+  }, [page, searchParams, hasMore, isHomePage, isSavedPostsPage, navigate]);
 
   // Reset page and posts when search params change
   useEffect(() => {
     setPosts([]);
     setPage(1);
     setHasMore(isHomePage);
-  }, [searchParams, isHomePage]);
+  }, [searchParams, isHomePage, isSavedPostsPage]);
 
   // Fetch posts when component mounts or page/search changes
   useEffect(() => {
@@ -139,7 +141,7 @@ function HomePosts() {
       {/* No Posts Found State */}
       {posts.length === 0 && loaded && (
         <div className="no-posts-container">
-          <p>No Posts Found</p>
+          <p>{isSavedPostsPage ? "No Saved Posts Found" : "No Posts Found"}</p>
         </div>
       )}
 

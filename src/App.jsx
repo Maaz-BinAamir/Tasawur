@@ -16,6 +16,7 @@ function App() {
         <Route path="/signup" element={<SignUpForm />} />
         <Route path="/" element={<HomePosts />} />
         <Route path="/search" element={<HomePosts />} />
+        <Route path="/saved_posts" element={<HomePosts />} />
         <Route path="/post/:postID" element={<Post />} />
         <Route path="/create_post" element={<CreatePost />} />
         <Route path="/profile/:id" element={<Profile />} />

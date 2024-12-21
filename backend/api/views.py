@@ -1,5 +1,5 @@
 from supabase import create_client, Client
-from api.models import Category, CustomUser, Follower_Following, PostCategories, Posts, Comments, PostLikes, CommentLikes, UserPreferences, logs
+from api.models import Category, CustomUser, Follower_Following, PostCategories, Posts, Comments, PostLikes, CommentLikes, UserPreferences, logs, SavedPosts
 from django.db import models
 from .serializers import CategoriesSerializer, PostsSerializer, PreferencesSerializer, UserSerializer, CommentsSerializer, CommentSaveSerializer
 from django.contrib.auth import authenticate
@@ -309,6 +309,7 @@ def post_details(request, post_id):
     post = Posts.objects.get(id=post_id)
     user = post.user_id
     comments = Comments.objects.filter(post_id=post_id)
+    hasSaved = SavedPosts.objects.filter(post_id=post_id, user_id=request.user.id).exists()
     
     serialized_user = UserSerializer(user)
     serialized_comments = CommentsSerializer(comments, many=True)
@@ -323,6 +324,7 @@ def post_details(request, post_id):
         'time_created': post.time_created,
         'comments': serialized_comments.data,
         'isAuthor': user.id == request.user.id,
+        'hasSaved' : hasSaved,
     }, status=status.HTTP_200_OK)
 
 @api_view(['GET'])
@@ -384,6 +386,15 @@ def home_posts(request):
     print(serializer.data)
     return Response(serializer.data)
 
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def saved_posts(request):
+    user = CustomUser.objects.get(id=request.user.id)
+    saved_posts = SavedPosts.objects.filter(user_id=user)
+    posts = Posts.objects.filter(id__in=saved_posts.values_list('post_id', flat=True))
+    posts_serializer = PostsSerializer(posts, many=True)
+    return Response(posts_serializer.data)
+
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
 def create_comment(request, post_id):
@@ -409,6 +420,23 @@ def get_comments(request, post_id):
     comments = Comments.objects.filter(post_id=post_id)
     comments_serializer = CommentsSerializer(comments, many=True, context={'request': request})
     return Response(comments_serializer.data)
+
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+def save_post(request, post_id):
+    post = Posts.objects.get(id=post_id)
+    user = CustomUser.objects.get(id=request.user.id)
+    if (SavedPosts.objects.filter(post_id=post, user_id=user).exists()):
+        SavedPosts.objects.filter(post_id=post, user_id=user).delete()
+        
+        logs.objects.create(user_id=user, action=f"User unsaved post (id:{post_id})")
+        
+        return Response({'message': 'Post unsaved successfully.'}, status=status.HTTP_204_NO_CONTENT)
+    SavedPosts.objects.create(post_id=post, user_id=user)
+    
+    logs.objects.create(user_id=user, action=f"User saved post (id:{post_id})")
+    
+    return Response({'message': 'Post saved successfully.'}, status=status.HTTP_201_CREATED)
 
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])

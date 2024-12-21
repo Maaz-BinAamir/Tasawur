@@ -39,6 +39,10 @@ class Comments(models.Model):
     content = models.TextField()
     time_created = models.DateTimeField(auto_now_add=True)
 
+class SavedPosts(models.Model):
+    post_id = models.ForeignKey(Posts, on_delete=models.CASCADE, related_name='saved_posts')
+    user_id = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name='saved_posts')
+
 class PostLikes(models.Model):
     post_id = models.ForeignKey(Posts, on_delete=models.CASCADE, related_name='post_likes')
     user_id = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name='liked_posts')
