@@ -37,9 +37,8 @@ function HomePosts() {
 
     const query = searchParams.get("q") || "";
     const category = searchParams.get("category") || "";
-
     try {
-      const url = isHomePage
+      const url = !isSavedPostsPage
         ? `http://127.0.0.1:8000/api/homeposts/?page=${page}&q=${encodeURIComponent(
             query
           )}&category=${encodeURIComponent(category)}`
