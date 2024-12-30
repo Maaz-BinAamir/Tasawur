@@ -3,7 +3,7 @@ from django.contrib.auth.models import AbstractUser
 
 # Create your models here.
 class CustomUser(AbstractUser):
-    profile_picture = models.URLField(max_length=1024, blank=True, null=True)
+    profile_picture = models.URLField(max_length=1024, blank=True, null=True, default="https://kwebqbdcvbwonprlzwuy.supabase.co/storage/v1/object/public/profiles/default_profile_picture.jpg")
     bio = models.TextField(blank=True, null=True)
 
     def __str__(self):
@@ -42,6 +42,7 @@ class Comments(models.Model):
 class SavedPosts(models.Model):
     post_id = models.ForeignKey(Posts, on_delete=models.CASCADE, related_name='saved_posts')
     user_id = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name='saved_posts')
+    save_time = models.DateTimeField(auto_now_add=True)
 
 class PostLikes(models.Model):
     post_id = models.ForeignKey(Posts, on_delete=models.CASCADE, related_name='post_likes')

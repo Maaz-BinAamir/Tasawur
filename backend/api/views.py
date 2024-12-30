@@ -390,7 +390,7 @@ def home_posts(request):
 @permission_classes([IsAuthenticated])
 def saved_posts(request):
     user = CustomUser.objects.get(id=request.user.id)
-    saved_posts = SavedPosts.objects.filter(user_id=user)
+    saved_posts = SavedPosts.objects.filter(user_id=user).order_by('-save_time')
     posts = Posts.objects.filter(id__in=saved_posts.values_list('post_id', flat=True))
     posts_serializer = PostsSerializer(posts, many=True)
     return Response(posts_serializer.data)
