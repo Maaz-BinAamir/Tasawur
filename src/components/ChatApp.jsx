@@ -13,7 +13,11 @@ const ChatApp = () => {
   const messagesEndRef = useRef(null);
 
   const scrollToBottom = () => {
-    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+    const messagesContainer = messagesEndRef.current?.parentElement;
+    if (messagesContainer) {
+      messagesContainer.scrollTop =
+        messagesContainer.scrollHeight - messagesContainer.clientHeight;
+    }
   };
 
   useEffect(() => {
