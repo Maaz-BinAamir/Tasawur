@@ -63,3 +63,14 @@ class UserPreferences(models.Model):
 class PostCategories(models.Model):
     post_id = models.ForeignKey(Posts, on_delete=models.CASCADE, related_name='categories')
     category_id = models.ForeignKey(Category, on_delete=models.CASCADE, related_name='posts')
+
+class Notification(models.Model):
+    user = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name='notifications')
+    actor = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name='acted_notifications')
+    post = models.ForeignKey(Posts, on_delete=models.CASCADE, related_name='notifications', null=True)
+    message = models.CharField(max_length=255)
+    is_read = models.BooleanField(default=False)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ['-created_at']

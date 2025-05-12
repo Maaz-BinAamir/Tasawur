@@ -3,8 +3,8 @@ import "@fortawesome/fontawesome-free/css/all.min.css";
 import { useNavigate } from "react-router-dom";
 import SearchBar from "./SearchBar";
 import axios from "axios";
-import logo from "../images/logo.png";
-
+import logo from "../assets/images/logo.png";
+import Notification from "./Notification";
 
 function NavBar() {
   const navigate = useNavigate();
@@ -47,10 +47,10 @@ function NavBar() {
 
   return (
     <nav className="NavBar">
-     {/* Logo Section */}
-  <div className="logo" onClick={openHome}>
-    <img className="logo-img" src={logo} alt="Description" />
-  </div>
+      {/* Logo Section */}
+      <div className="logo" onClick={openHome}>
+        <img className="logo-img" src={logo} alt="Description" />
+      </div>
 
       {/* Search Bar Section */}
       <div className="search-wrapper">
@@ -71,6 +71,7 @@ function NavBar() {
         <button className="icon" onClick={openProfile}>
           <i className="fas fa-user"></i>
         </button>
+        <Notification />
         <button className="icon" onClick={logoutUser}>
           <i className="fas fa-sign-out-alt"></i>
         </button>

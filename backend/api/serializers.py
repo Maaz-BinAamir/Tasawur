@@ -1,4 +1,4 @@
-from .models import CustomUser, Posts, Comments, CommentLikes, Category, UserPreferences
+from .models import CustomUser, Posts, Comments, CommentLikes, Category, UserPreferences, Notification
 from rest_framework import serializers
 
 class UserSerializer(serializers.ModelSerializer):
@@ -64,3 +64,12 @@ class PreferencesSerializer(serializers.ModelSerializer):
     class Meta:
         model = UserPreferences
         fields = ["category_id"]
+
+class NotificationSerializer(serializers.ModelSerializer):
+    actor = UserSerializer(read_only=True)
+    post = PostsSerializer(read_only=True)
+
+    class Meta:
+        model = Notification
+        fields = ['id', 'actor', 'post', 'message', 'is_read', 'created_at']
+        read_only_fields = ['created_at']

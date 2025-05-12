@@ -1,7 +1,7 @@
 from supabase import create_client, Client
-from api.models import Category, CustomUser, Follower_Following, PostCategories, Posts, Comments, PostLikes, CommentLikes, UserPreferences, logs, SavedPosts
+from api.models import Category, CustomUser, Follower_Following, PostCategories, Posts, Comments, PostLikes, CommentLikes, UserPreferences, logs, SavedPosts, Notification
 from django.db import models
-from .serializers import CategoriesSerializer, PostsSerializer, PreferencesSerializer, UserSerializer, CommentsSerializer, CommentSaveSerializer
+from .serializers import CategoriesSerializer, PostsSerializer, PreferencesSerializer, UserSerializer, CommentsSerializer, CommentSaveSerializer, NotificationSerializer
 from django.contrib.auth import authenticate
 from google.oauth2 import id_token
 from google.auth.transport import requests
@@ -12,8 +12,8 @@ from rest_framework.decorators import api_view, permission_classes
 from rest_framework_simplejwt.tokens import RefreshToken
 import random
 
-url = "https://kwebqbdcvbwonprlzwuy.supabase.co"  # Replace with your Supabase URL
-key = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imt3ZWJxYmRjdmJ3b25wcmx6d3V5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3MzI0NDUxNDIsImV4cCI6MjA0ODAyMTE0Mn0.urhzDnWoKR14FmLG58bNCZ5-l-SEOhpG0Lk1-DI2vG8"  # Replace with your Supabase API Key
+url = "https://znveczjbttqoexackpmm.supabase.co"  # Replace with your Supabase URL
+key = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InpudmVjempidHRxb2V4YWNrcG1tIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDcwNjkzMjIsImV4cCI6MjA2MjY0NTMyMn0.6kLIYL6G5i0A2flLr1FY5WwXS6_5AsJN35iwTT-08UA"  # Replace with your Supabase API Key
 supabase: Client = create_client(url, key)
 
 @api_view(['POST'])
@@ -155,7 +155,7 @@ def update_user(request):
         
     except CustomUser.DoesNotExist:
         return Response({'error': 'Post not found.'}, status=status.HTTP_404_NOT_FOUND)
-        
+    
     profile_picture = request.FILES.get('profile_picture')
     if profile_picture:
         filename = f"{user.id}_{profile_picture.name}"
@@ -168,6 +168,7 @@ def update_user(request):
 
             # Upload the new profile picture
             upload_response = supabase.storage.from_('profiles').upload(filename, profile_picture.read())
+            print("hello")
             if not upload_response:
                 return Response({'error': 'Failed to upload image to Supabase.'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
             
@@ -217,7 +218,6 @@ def create_posts(request):
 
     # Extract the file from the request
     image = request.FILES.get('image')
-    # print(image.read())
     
     if not image:
         return Response({'error': 'No image provided'}, status=status.HTTP_400_BAD_REQUEST)
@@ -229,7 +229,6 @@ def create_posts(request):
         # Upload the image to Supabase storage
         upload_response = supabase.storage.from_('posts').upload(filename,image.read())
 
-    
         if not upload_response:
             return Response({'error': 'Failed to upload image to Supabase'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
         
@@ -239,10 +238,9 @@ def create_posts(request):
         # Prepare post data
         data = {
             "description": request.data.get("description"),
-            "image": request.data.get("image"), 
             "image": image_url, 
             "user_id": request.user.id
-            }        
+        }        
         
         # Serialize and save the post
         serializer = PostsSerializer(data=data)
@@ -254,6 +252,16 @@ def create_posts(request):
             for category_id in categories:
                 category = Category.objects.get(id=category_id)
                 PostCategories.objects.create(post_id=post, category_id=category)
+            
+            # Create notifications for all followers
+            followers = Follower_Following.objects.filter(following=request.user)
+            for follower in followers:
+                Notification.objects.create(
+                    user=follower.follower,
+                    actor=request.user,
+                    post=post,
+                    message=f"{request.user.username} posted something new"
+                )
                 
             logs.objects.create(user_id=request.user, action=f"User created post (id:{post.id})")
                 

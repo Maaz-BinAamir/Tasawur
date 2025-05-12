@@ -1,66 +1,47 @@
-nav {
-  display: flex;
-  align-items: center;
-  padding: 10px 20px;
-  background-color: #fff;
-  position: fixed; /* Make the navbar fixed */
-  top: 0;
-  left: 0;
-  right: 0;
-  z-index: 1000; /* Ensure it stays above other content */
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-  justify-content: space-between;
-}
-
-.logo {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  background-color: #fff;
-  border-radius: 50%;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-  width: 60px;
-  height: 60px;
-}
-
-.logo-img {
-  height: 60px;
-  width: 60px;
-  border-radius: 50%;
-  object-fit: cover;
-}
-
-.search-wrapper {
-  flex-grow: 1;
-  display: flex;
-  justify-content: center;
-  margin: 0 20px;
-}
-
-.links {
-  display: flex;
-  gap: 15px;
-  align-items: center;
-}
-
-.icon {
-  font-size: 25px;
-  color: #5f5f66;
-  text-decoration: none;
-  font-weight: 600;
-  padding: 10px 15px;
-  border: none;
-  background: none;
-}
-
-.icon:hover {
-  background: #dad9d9;
-  border-radius: 90%;
-}
-
 .notification-container {
   position: relative;
+  display: inline-block;
+}
+
+.notification-bell {
+  position: relative;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 10px;
+  font-size: 1.2rem;
+  color: #5f5f66;
+}
+
+.notification-bell:hover {
+  background: #dad9d9;
+  border-radius: 50%;
+}
+
+.notification-dot {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  width: 8px;
+  height: 8px;
+  background-color: #ff4444;
+  border-radius: 50%;
+  animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+  0% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  50% {
+    transform: scale(1.2);
+    opacity: 0.8;
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
 }
 
 .notification-badge {
