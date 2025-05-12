@@ -151,7 +151,9 @@ function Notification() {
                 onClick={() => handleNotificationClick(notification)}
               >
                 <img
-                  src={notification.actor.profile_pic || "default-avatar.png"}
+                  src={
+                    notification.actor.profile_picture || "default-avatar.png"
+                  }
                   alt={notification.actor.username}
                   className="notification-avatar"
                 />
